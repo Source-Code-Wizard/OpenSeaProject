@@ -2,10 +2,11 @@ package com.example.webapplication.Bidder;
 
 import com.example.webapplication.User.User;
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "Bidders")
-public class Bidder {
+public class Bidder implements Serializable {
     private Integer rating;
     @Id
     @OneToOne
@@ -13,8 +14,7 @@ public class Bidder {
             @JoinColumn(name = "UserId", referencedColumnName = "userId"),
             @JoinColumn(name = "UserAddress", referencedColumnName = "address"),
             @JoinColumn(name = "UserCountry", referencedColumnName = "Country")
-    }
-    )
+    })
     private User user;
 
     public Bidder() {

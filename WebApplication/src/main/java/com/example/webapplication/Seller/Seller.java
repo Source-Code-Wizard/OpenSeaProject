@@ -1,26 +1,28 @@
+
 package com.example.webapplication.Seller;
 
 import com.example.webapplication.User.User;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name="Sellers")
-public class Seller {
+public class Seller implements Serializable {
     private int rating;
 
     @Id
-    private Long id;
-
-    /*@Id
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name="Sellerid",
-            referencedColumnName = "userId"
-    )*/
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
+    @OneToOne
+    @JoinColumns({
+            @JoinColumn(name = "SellerId", referencedColumnName = "userId"),
+            @JoinColumn(name = "SellerAdrress", referencedColumnName = "address"),
+            @JoinColumn(name = "SellerCountry", referencedColumnName = "country"),
+    })
+    //@MapsId
     private User user;
+   /* @OneToOne(fetch = FetchType.LAZY)
+    @MapsId*/
+
 
     public Seller() {
     }
@@ -44,3 +46,4 @@ public class Seller {
                 '}';
     }
 }
+

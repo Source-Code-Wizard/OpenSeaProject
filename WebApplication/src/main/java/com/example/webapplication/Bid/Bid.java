@@ -3,11 +3,12 @@ package com.example.webapplication.Bid;
 import com.example.webapplication.Bidder.Bidder;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Table
-public class Bid {
+public class Bid implements Serializable {
 
     @Id
     @OneToOne

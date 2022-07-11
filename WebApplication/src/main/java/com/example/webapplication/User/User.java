@@ -1,7 +1,7 @@
 package com.example.webapplication.User;
 
 import com.example.webapplication.Administrator.Administrator;
-import com.example.webapplication.Seller.Seller;
+//import com.example.webapplication.Seller.Seller;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -36,22 +36,20 @@ public class User implements Serializable { //Composite primary keys require Ser
             name="Administrator_id",
             referencedColumnName = "adminId"
     )*/
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Administrator administrator;
+   /* @ManyToOne(fetch = FetchType.LAZY)
+    private Administrator administrator;*/
 
    /* @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn( referencedColumnName = "Seller_id")
     private Seller seller;*/
 
-    @OneToOne(mappedBy = "Users", cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, optional = false)
-    private Seller seller;
+   /* @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, optional = false)*/
+   /* @OneToOne(mappedBy = "user")
+    private Seller seller;*/
 
     public User() {
     }
-
-
-
 
     public User(String username, String password, String name, String subname, String email,
                 long phone_number, String address, String AFM, String attribute, String country)

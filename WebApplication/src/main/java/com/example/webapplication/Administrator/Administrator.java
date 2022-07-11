@@ -30,14 +30,11 @@ public class Administrator {
     )
     private String password;
 
-  /*  @OneToMany(mappedBy="administrator", cascade = CascadeType.ALL)
-    private Set<User> user;*/
-
-    @OneToMany(
-            mappedBy = "Administrator",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    // one to many unidirectional mapping
+    // default fetch type for OneToMany: LAZY
+    @OneToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
+    // we create to user-table a new column named:Administrator_id which refers to AdminTable.adminId column
+    @JoinColumn(name = "Administrator_id", referencedColumnName = "adminId")
     private List<User> usersList = new ArrayList<>();
 
     public Administrator() {

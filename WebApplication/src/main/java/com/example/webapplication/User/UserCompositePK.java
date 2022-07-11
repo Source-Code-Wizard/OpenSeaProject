@@ -5,9 +5,9 @@ import java.util.Objects;
 
 /* composite PKs must have their own class implementation!*/
 public class UserCompositePK implements Serializable {
-    private String address;
-    private String country;
-    private Long userId;
+    public String address;
+    public String country;
+    public Long userId;
 
     public UserCompositePK() {
     }
