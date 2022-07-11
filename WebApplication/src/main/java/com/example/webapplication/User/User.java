@@ -1,5 +1,8 @@
 package com.example.webapplication.User;
 
+import com.example.webapplication.Administrator.Administrator;
+import com.example.webapplication.Seller.Seller;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -9,10 +12,10 @@ import java.io.Serializable;
 @IdClass(UserCompositePK.class)
 public class User implements Serializable { //Composite primary keys require Serializible
     @Id
-
     @SequenceGenerator(
             name= "user_sequence", sequenceName = "user_sequence",allocationSize = 1
     )
+
     @GeneratedValue( strategy = GenerationType.SEQUENCE,generator = "user_sequence")
     private Long userId;
     private String Username;
@@ -28,10 +31,31 @@ public class User implements Serializable { //Composite primary keys require Ser
     @Id
     private String country;
 
+    //@ManyToOne
+   /* @JoinColumn(
+            name="Administrator_id",
+            referencedColumnName = "adminId"
+    )*/
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Administrator administrator;
+
+   /* @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn( referencedColumnName = "Seller_id")
+    private Seller seller;*/
+
+    @OneToOne(mappedBy = "Users", cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, optional = false)
+    private Seller seller;
+
     public User() {
     }
 
-    public User(String username, String password, String name, String subname, String email, long phone_number, String address, String AFM, String attribute, String country) {
+
+
+
+    public User(String username, String password, String name, String subname, String email,
+                long phone_number, String address, String AFM, String attribute, String country)
+    {
         Username = username;
         this.password = password;
         this.name = name;
