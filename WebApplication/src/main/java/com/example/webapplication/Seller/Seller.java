@@ -5,6 +5,7 @@ import com.example.webapplication.User.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name="Sellers")
@@ -41,6 +42,19 @@ public class Seller implements Serializable {
         return "Seller{" +
                 "rating=" + rating +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Seller)) return false;
+        Seller seller = (Seller) o;
+        return getRating() == seller.getRating() && user.equals(seller.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getRating(), user);
     }
 }
 

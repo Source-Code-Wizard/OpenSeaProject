@@ -1,3 +1,4 @@
+/*
 package com.example.webapplication.WebConfiguration;
 
 import org.springframework.context.annotation.Bean;
@@ -25,3 +26,4 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .permitAll();
     }
 }
+*/

@@ -16,7 +16,7 @@ public class UserConfiguration {
                     "alex","alex2001","Alexandros","Tsalapatis",
                     "alex@gmail.com",679120494,"Athens,32","123","user",
                     "Greece");
-          userRepository.saveAll(List.of(firstUser));
+          //userRepository.saveAll(List.of(firstUser));
         };
     }
 }

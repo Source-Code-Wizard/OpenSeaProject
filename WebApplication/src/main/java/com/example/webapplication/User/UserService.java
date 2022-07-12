@@ -24,4 +24,16 @@ public class UserService {
     public List<User> getUser(){
         return userRepository.findAll();
     }
+
+    /* Save a specific User to the data base! */
+    public User registerUserToBase(User userForRegistration){
+        return userRepository.save(userForRegistration);
+    }
+
+    public User getSpecificUser(){
+        return new User(
+                "alex","alex2001","Alexandros","Tsalapatis",
+                "alex@gmail.com",679120494,"Athens,32","123","user",
+                "Greece");
+    }
 }

@@ -5,6 +5,7 @@ import com.example.webapplication.Bidder.Bidder;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -51,5 +52,18 @@ public class Bid implements Serializable {
                 "localBidDateTime=" + localBidDateTime +
                 ", moneyAmount=" + moneyAmount +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Bid)) return false;
+        Bid bid = (Bid) o;
+        return bidder.equals(bid.bidder);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(bidder);
     }
 }
