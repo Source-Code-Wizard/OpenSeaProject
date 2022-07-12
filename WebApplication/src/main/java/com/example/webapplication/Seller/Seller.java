@@ -18,11 +18,8 @@ public class Seller implements Serializable {
             @JoinColumn(name = "SellerAdrress", referencedColumnName = "address"),
             @JoinColumn(name = "SellerCountry", referencedColumnName = "country"),
     })
-    //@MapsId
-    private User user;
-   /* @OneToOne(fetch = FetchType.LAZY)
-    @MapsId*/
 
+    private User user;
 
     public Seller() {
     }

@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository;
 
 /* this interface implements the dataBase access-layer of the application */
 @Repository
-public interface UserRepository extends JpaRepository<User,UserCompositePK> {
-}
+public interface UserRepository extends JpaRepository<User,UserCompositePK> { }
