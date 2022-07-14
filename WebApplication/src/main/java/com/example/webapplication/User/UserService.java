@@ -2,8 +2,15 @@ package com.example.webapplication.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 /*
 * (1): Since we want to implement the D.I. pattern , we have to instantiate ( with anotation: @Service) the UserService class since we pass
@@ -21,7 +28,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getUser(){
+    public List<User> getAllUsers(){
         return userRepository.findAll();
     }
 
@@ -30,10 +37,20 @@ public class UserService {
         return userRepository.save(userForRegistration);
     }
 
-    public User getSpecificUser(){
-        return new User(
-                "alex","alex2001","Alexandros","Tsalapatis",
-                "alex@gmail.com",679120494,"Athens,32","123","user",
-                "Greece");
+
+
+    public Optional<User>  getUserByUserName(String userName){
+        return userRepository.findByUsername(userName);
     }
+
+  /*  @Override
+    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User not found with username or email:" + usernameOrEmail));
+        return new org.springframework.security.core.userdetails.User(user.getEmail(),
+                user.getPassword());
+    }
+
+*/
 }

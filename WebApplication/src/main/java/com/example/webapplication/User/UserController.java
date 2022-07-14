@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 /* this is the api implementation that contacts the service layer*/
 
 /*  This code uses Spring @RestController annotation,
@@ -24,20 +25,11 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-/*
 
-    @GetMapping("/users")
-    public List<User>getUser(){
-        return userService.getUser();
+    @GetMapping("/getAllUsers")
+    public List<User>getAllUsers(){
+        return userService.getAllUsers();
     }
-
-    @GetMapping("/alex")
-    public User helloUser() {
-        return userService.getSpecificUser();
-    }
-*/
-
-
     /*
         Simply put, the @RequestBody annotation maps the HttpRequest body to a transfer or domain object,
         enabling automatic deserialization of the inbound HttpRequest body onto a Java object.(domain object to java object)
@@ -45,5 +37,10 @@ public class UserController {
     @PostMapping()
     public ResponseEntity<User>registerUserToBase(@RequestBody User userForRegistration){
         return new ResponseEntity<>(userService.registerUserToBase(userForRegistration), HttpStatus.CREATED);
+    }
+
+    @GetMapping("{_username}")
+    public ResponseEntity<Optional<User>>getUserByUsername(@PathVariable("_username") String userName){
+        return new ResponseEntity<>(userService.getUserByUserName(userName),HttpStatus.OK);
     }
 }

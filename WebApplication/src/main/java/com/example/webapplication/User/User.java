@@ -18,7 +18,8 @@ public class User implements Serializable { //Composite primary keys require Ser
 
     @GeneratedValue( strategy = GenerationType.SEQUENCE,generator = "user_sequence")
     private Long userId;
-    private String Username;
+    @Column(name="Username")
+    private String username;
     private String password;
     private String name;
     private String subname;
@@ -54,7 +55,7 @@ public class User implements Serializable { //Composite primary keys require Ser
     public User(String username, String password, String name, String subname, String email,
                 long phone_number, String address, String AFM, String attribute, String country)
     {
-        Username = username;
+        this.username = username;
         this.password = password;
         this.name = name;
         this.subname = subname;
@@ -66,16 +67,16 @@ public class User implements Serializable { //Composite primary keys require Ser
         this.country = country;
     }
 
-    public User(String username){
-        Username=username;
+    public User(String _username){
+        username=_username;
     }
 
     public String getUsername() {
-        return Username;
+        return username;
     }
 
-    public void setUsername(String username) {
-        Username = username;
+    public void setUsername(String _username) {
+        username = _username;
     }
 
     public String getPassword() {
