@@ -34,6 +34,7 @@ public class UserController {
         Simply put, the @RequestBody annotation maps the HttpRequest body to a transfer or domain object,
         enabling automatic deserialization of the inbound HttpRequest body onto a Java object.(domain object to java object)
     */
+    @CrossOrigin(origins = "*")
     @PostMapping()
     public ResponseEntity<User>registerUserToBase(@RequestBody User userForRegistration){
         return new ResponseEntity<>(userService.registerUserToBase(userForRegistration), HttpStatus.CREATED);

@@ -32,23 +32,6 @@ public class User implements Serializable { //Composite primary keys require Ser
     @Id
     private String country;
 
-    //@ManyToOne
-   /* @JoinColumn(
-            name="Administrator_id",
-            referencedColumnName = "adminId"
-    )*/
-   /* @ManyToOne(fetch = FetchType.LAZY)
-    private Administrator administrator;*/
-
-   /* @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn( referencedColumnName = "Seller_id")
-    private Seller seller;*/
-
-   /* @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, optional = false)*/
-   /* @OneToOne(mappedBy = "user")
-    private Seller seller;*/
-
     public User() {
     }
 

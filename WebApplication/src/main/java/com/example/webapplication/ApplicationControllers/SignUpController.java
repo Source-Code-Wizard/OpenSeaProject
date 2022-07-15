@@ -10,14 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class LoginController {
-
+public class SignUpController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/api/users/login")
-    public ResponseEntity<?> login(@RequestBody User user) throws Exception {
-        return userService.login(user);
+    @PostMapping("/api/users/signup")
+    public ResponseEntity<?> signUp(@RequestBody User user) throws Exception {
+        return userService.signUp(user);
     }
-
 }

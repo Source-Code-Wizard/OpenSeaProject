@@ -1,7 +1,7 @@
 
 package com.example.webapplication.WebConfiguration;
 
-import com.example.webapplication.WebConfiguration.CustomeUserService;
+import com.example.webapplication.WebConfiguration.UserDetailsServiceImp;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,46 +24,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
-/*
-
-    @Autowired
-    private CustomeUserService userDetailsService;
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-			.csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/api/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        */
-/* this function decides the way that passwords are decrypted with! *//*
-
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-    }
-
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-*/
-    private CustomeUserService userDetailsService;
-
+    private UserDetailsServiceImp userDetailsService;
     private BCryptPasswordEncoder passwordEncoder;
 
-    public WebSecurityConfiguration(CustomeUserService userDetailsService, BCryptPasswordEncoder passwordEncoder) {
+    public WebSecurityConfiguration(UserDetailsServiceImp userDetailsService, BCryptPasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -71,10 +35,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
-                .anyRequest().authenticated()
+                .antMatchers("/**").permitAll().and().authorizeRequests().anyRequest().authenticated()
                 .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+//                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+//                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
                 // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
@@ -93,6 +57,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }
 
