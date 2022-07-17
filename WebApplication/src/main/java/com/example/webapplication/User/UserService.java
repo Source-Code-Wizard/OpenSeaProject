@@ -57,14 +57,31 @@ public class UserService {
         return userRepository.findByUsername(userName);
     }
 
-    public ResponseEntity<?> login(@RequestBody User user) throws Exception {
+    /*public ResponseEntity<?> login(@RequestBody User user) {
 
         Authentication authObject = null;
         try {
+            if(!user.isRegistered())
+                return new ResponseEntity<>("Administrator has to accept this user first...", HttpStatus.BAD_REQUEST);
+
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authObject);
         } catch (BadCredentialsException e) {
-            //throw new Exception("Invalid credentials");
+            return new ResponseEntity<>("Invalid credentials!", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("User logged in successfully",HttpStatus.OK);
+    }*/
+    public ResponseEntity<?> login(String userEmail,String userPassword) {
+
+        Authentication authObject = null;
+        try {
+            Optional<User> user= userRepository.findByEmail(userEmail);
+            if(!user.get().isRegistered())
+                return new ResponseEntity<>("Administrator has to accept this user first...", HttpStatus.BAD_REQUEST);
+
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userEmail, userPassword));
+            SecurityContextHolder.getContext().setAuthentication(authObject);
+        } catch (BadCredentialsException e) {
             return new ResponseEntity<>("Invalid credentials!", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("User logged in successfully",HttpStatus.OK);
@@ -82,11 +99,16 @@ public class UserService {
         if(userRepository.existsByEmail(user.getEmail())){
             return new ResponseEntity<>("Email is already taken!", HttpStatus.BAD_REQUEST);
         }
-
-        // register User to database!
+        //first we need to convert the password to a bcrypt password type!
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // register User to database!
         userRepository.save(user);
 
         return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> deleteAllUsers(){
+        userRepository.deleteAll();
+        return new ResponseEntity<>("All users have been deleted!", HttpStatus.OK);
     }
 }

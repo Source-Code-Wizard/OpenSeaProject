@@ -44,4 +44,8 @@ public class UserController {
     public ResponseEntity<Optional<User>>getUserByUsername(@PathVariable("_username") String userName){
         return new ResponseEntity<>(userService.getUserByUserName(userName),HttpStatus.OK);
     }
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<?> deleteAllUsers(){
+       return new ResponseEntity<>(userService.deleteAllUsers(),HttpStatus.OK);
+    }
 }

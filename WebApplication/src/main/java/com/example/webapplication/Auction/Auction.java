@@ -20,7 +20,6 @@ public class Auction {
 
     private String name;
     private String category;
-
     @Column(name="Currently")
     private double currentOffer;
 

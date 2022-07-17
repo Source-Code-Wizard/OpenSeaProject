@@ -32,7 +32,17 @@ public class User implements Serializable { //Composite primary keys require Ser
     @Id
     private String country;
 
+    private boolean isRegistered;
+
     public User() {
+    }
+
+    public boolean isRegistered() {
+        return isRegistered;
+    }
+
+    public void setRegistered(boolean registered) {
+        isRegistered = registered;
     }
 
     public User(String username, String password, String name, String subname, String email,
@@ -48,6 +58,7 @@ public class User implements Serializable { //Composite primary keys require Ser
         this.AFM = AFM;
         this.Attribute = attribute;
         this.country = country;
+        this.isRegistered=false;
     }
 
     public User(String _username){
