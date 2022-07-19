@@ -1,5 +1,10 @@
 package com.example.webapplication.User;
 
+import com.example.webapplication.Role.Role;
+import com.example.webapplication.Role.RoleRepository;
+import com.example.webapplication.WebConfiguration.AuthenticatedUser;
+import com.example.webapplication.WebConfiguration.JWTutils;
+import com.example.webapplication.WebConfiguration.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,17 +15,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.swing.text.html.Option;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
 * (1): Since we want to implement the D.I. pattern , we have to instantiate ( with anotation: @Service) the UserService class since we pass
@@ -38,10 +40,14 @@ public class UserService {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, AuthenticationManager authenticationManager,BCryptPasswordEncoder passwordEncoder) {
+    RoleRepository roleRepository;
+
+    @Autowired
+    public UserService(UserRepository userRepository, AuthenticationManager authenticationManager,BCryptPasswordEncoder passwordEncoder , RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.authenticationManager=authenticationManager;
         this.passwordEncoder=passwordEncoder;
+        this.roleRepository=roleRepository;
     }
 
     public List<User> getAllUsers(){
@@ -57,34 +63,29 @@ public class UserService {
         return userRepository.findByUsername(userName);
     }
 
-    /*public ResponseEntity<?> login(@RequestBody User user) {
-
-        Authentication authObject = null;
-        try {
-            if(!user.isRegistered())
-                return new ResponseEntity<>("Administrator has to accept this user first...", HttpStatus.BAD_REQUEST);
-
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authObject);
-        } catch (BadCredentialsException e) {
-            return new ResponseEntity<>("Invalid credentials!", HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>("User logged in successfully",HttpStatus.OK);
-    }*/
     public ResponseEntity<?> login(String userEmail,String userPassword) {
 
-        Authentication authObject = null;
         try {
             Optional<User> user= userRepository.findByEmail(userEmail);
             if(!user.get().isRegistered())
                 return new ResponseEntity<>("Administrator has to accept this user first...", HttpStatus.BAD_REQUEST);
+            Authentication authObject= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userEmail, userPassword));
 
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userEmail, userPassword));
             SecurityContextHolder.getContext().setAuthentication(authObject);
+
+            String jwt = JWTutils.generateJwtToken(authObject);
+
+            AuthenticatedUser authenticatedUser = (AuthenticatedUser) authObject.getPrincipal();
+
+            List<String> roles = authenticatedUser.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(new JwtResponse(jwt, authenticatedUser.getUsername(), authenticatedUser.getEmail(), roles));
+
         } catch (BadCredentialsException e) {
             return new ResponseEntity<>("Invalid credentials!", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("User logged in successfully",HttpStatus.OK);
     }
 
 
@@ -94,17 +95,23 @@ public class UserService {
         if(userRepository.existsByUsername(user.getUsername())){
             return new ResponseEntity<>("Username is already taken!", HttpStatus.BAD_REQUEST);
         }
-
         // add check for email exists in DB
         if(userRepository.existsByEmail(user.getEmail())){
             return new ResponseEntity<>("Email is already taken!", HttpStatus.BAD_REQUEST);
         }
         //first we need to convert the password to a bcrypt password type!
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        /* Assign user permission to new user!*/
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleRepository.findByName("USER");
+        roles.add(userRole);
+        user.setRoles(roles);
+
         // register User to database!
         userRepository.save(user);
 
-        return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
+        return new ResponseEntity<>("This registration request needs to be authenticated first by the administrator!", HttpStatus.OK);
     }
 
     public ResponseEntity<?> deleteAllUsers(){

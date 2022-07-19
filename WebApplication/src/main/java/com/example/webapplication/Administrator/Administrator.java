@@ -10,7 +10,6 @@ import java.util.List;
 @Entity
 @Table(name = "Administrator")
 public class Administrator {
-
     @Id
     @SequenceGenerator(
             name= "user_sequence", sequenceName = "user_sequence",allocationSize = 1

@@ -1,10 +1,12 @@
 package com.example.webapplication.User;
 
-import com.example.webapplication.Administrator.Administrator;
+import com.example.webapplication.Role.Role;
 //import com.example.webapplication.Seller.Seller;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -15,7 +17,6 @@ public class User implements Serializable { //Composite primary keys require Ser
     @SequenceGenerator(
             name= "user_sequence", sequenceName = "user_sequence",allocationSize = 1
     )
-
     @GeneratedValue( strategy = GenerationType.SEQUENCE,generator = "user_sequence")
     private Long userId;
     @Column(name="Username")
@@ -28,7 +29,6 @@ public class User implements Serializable { //Composite primary keys require Ser
     @Id
     private String address;
     private String AFM;
-    private String Attribute;
     @Id
     private String country;
 
@@ -46,7 +46,7 @@ public class User implements Serializable { //Composite primary keys require Ser
     }
 
     public User(String username, String password, String name, String subname, String email,
-                long phone_number, String address, String AFM, String attribute, String country)
+                long phone_number, String address, String AFM, String country)
     {
         this.username = username;
         this.password = password;
@@ -56,10 +56,21 @@ public class User implements Serializable { //Composite primary keys require Ser
         this.phone_number = phone_number;
         this.address = address;
         this.AFM = AFM;
-        this.Attribute = attribute;
         this.country = country;
         this.isRegistered=false;
     }
+    @ManyToMany(targetEntity = Role.class)
+    /* each user may have more than one roles*/
+    //@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+   /* @JoinTable(
+            name = "user_roles",
+            joinColumns = {
+                    @JoinColumn(name = "user_id",referencedColumnName = "userId",columnDefinition = "Long"),
+                    @JoinColumn(name = "user_country",referencedColumnName = "country"),
+                    @JoinColumn(name = "user_address",referencedColumnName = "address"),},
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )*/
+    private Set<Role> roles = new HashSet<>();
 
     public User(String _username){
         username=_username;
@@ -129,19 +140,18 @@ public class User implements Serializable { //Composite primary keys require Ser
         this.AFM = AFM;
     }
 
-    public String getAttribute() {
-        return Attribute;
-    }
-
-    public void setAttribute(String attribute) {
-        Attribute = attribute;
-    }
-
     public String getCountry() {
         return country;
     }
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }
