@@ -62,7 +62,7 @@ public class User  { //Composite primary keys require Serializible
         this.country = country;
         this.isRegistered=false;
     }
-    @ManyToMany(targetEntity = Role.class)
+    @ManyToMany(fetch = FetchType.EAGER,targetEntity = Role.class)
     private Set<Role> roles = new HashSet<>();
 
     public User(String _username){

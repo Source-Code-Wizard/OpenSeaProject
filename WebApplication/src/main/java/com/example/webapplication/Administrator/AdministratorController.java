@@ -18,13 +18,13 @@ public class AdministratorController {
     public AdministratorController(AdminService adminService) {
         this.adminService = adminService;
     }
-   // @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/getRegRequests")
     public List<User> getRegistrationRequests(){
         return adminService.getRegistrationRequests();
     }
 
-  //  @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/getRegRequests/{userName}")
     public ResponseEntity<?> authenticateUser(@PathVariable("userName") String userName){
         return new ResponseEntity<>(adminService.authenticateUser(userName), HttpStatus.OK);

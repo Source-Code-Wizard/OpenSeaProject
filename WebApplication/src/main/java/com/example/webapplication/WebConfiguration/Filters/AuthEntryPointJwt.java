@@ -1,4 +1,4 @@
-package com.example.webapplication.WebConfiguration;
+package com.example.webapplication.WebConfiguration.Filters;
 
 
 import java.util.Map;

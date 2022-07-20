@@ -1,12 +1,11 @@
 package com.example.webapplication.User;
 
 import com.example.webapplication.Administrator.AdminRepository;
-import com.example.webapplication.Administrator.Administrator;
 import com.example.webapplication.Role.Role;
 import com.example.webapplication.Role.RoleRepository;
 import com.example.webapplication.WebConfiguration.AuthenticatedUser;
-import com.example.webapplication.WebConfiguration.JWTutils;
-import com.example.webapplication.WebConfiguration.JwtResponse;
+import com.example.webapplication.WebConfiguration.JWTs.JWTutils;
+import com.example.webapplication.WebConfiguration.JWTs.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.swing.text.html.Option;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -75,9 +73,8 @@ public class UserService {
           if(!user.get().isRegistered())
                 return new ResponseEntity<>("Administrator has to accept this user first...", HttpStatus.BAD_REQUEST);
 
-            String userEmail=user.get().getEmail();
-
-            Authentication authObject= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userEmail, userPassword));
+            //String userEmail=user.get().getEmail();
+            Authentication authObject= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, userPassword));
 
             SecurityContextHolder.getContext().setAuthentication(authObject);
 

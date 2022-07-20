@@ -6,6 +6,7 @@ package com.example.webapplication.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,6 +45,8 @@ public class UserController {
     public ResponseEntity<Optional<User>>getUserByUsername(@PathVariable("_username") String userName){
         return new ResponseEntity<>(userService.getUserByUserName(userName),HttpStatus.OK);
     }
+    @CrossOrigin(origins = "*")
+    @PreAuthorize("hasAuthority('USER')")
     @DeleteMapping("/deleteAll")
     public ResponseEntity<?> deleteAllUsers(){
        return new ResponseEntity<>(userService.deleteAllUsers(),HttpStatus.OK);

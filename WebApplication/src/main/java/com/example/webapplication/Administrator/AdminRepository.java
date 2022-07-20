@@ -10,11 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AdminRepository extends JpaRepository<Administrator, Long> {
+public interface AdminRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.isRegistered= false")
     List<User> showRegistrationRequests();
 
-    Boolean existsByEmail(String email);
-    Optional<Administrator> findByEmail(String email);
 }

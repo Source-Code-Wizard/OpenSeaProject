@@ -1,7 +1,7 @@
-package com.example.webapplication.WebConfiguration;
+package com.example.webapplication.WebConfiguration.JWTs;
 
+import com.example.webapplication.WebConfiguration.AuthenticatedUser;
 import io.jsonwebtoken.*;
-import lombok.Value;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -25,7 +25,7 @@ public class JWTutils {
                 .compact();
     }
     public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
     }
     public boolean validateJwtToken(String authToken) {
         try {

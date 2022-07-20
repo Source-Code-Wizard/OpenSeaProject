@@ -1,4 +1,4 @@
-package com.example.webapplication.WebConfiguration;
+package com.example.webapplication.WebConfiguration.JWTs;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
