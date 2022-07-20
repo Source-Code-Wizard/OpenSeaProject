@@ -1,5 +1,7 @@
 package com.example.webapplication.User;
 
+import com.example.webapplication.Administrator.AdminRepository;
+import com.example.webapplication.Administrator.Administrator;
 import com.example.webapplication.Role.Role;
 import com.example.webapplication.Role.RoleRepository;
 import com.example.webapplication.WebConfiguration.AuthenticatedUser;
@@ -35,6 +37,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final AdminRepository adminRepository;
+
     private AuthenticationManager authenticationManager;
 
     private BCryptPasswordEncoder passwordEncoder;
@@ -43,11 +47,13 @@ public class UserService {
     RoleRepository roleRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, AuthenticationManager authenticationManager,BCryptPasswordEncoder passwordEncoder , RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, AuthenticationManager authenticationManager,
+                       BCryptPasswordEncoder passwordEncoder , RoleRepository roleRepository,AdminRepository adminRepository) {
         this.userRepository = userRepository;
         this.authenticationManager=authenticationManager;
         this.passwordEncoder=passwordEncoder;
         this.roleRepository=roleRepository;
+        this.adminRepository=adminRepository;
     }
 
     public List<User> getAllUsers(){
@@ -63,12 +69,14 @@ public class UserService {
         return userRepository.findByUsername(userName);
     }
 
-    public ResponseEntity<?> login(String userEmail,String userPassword) {
-
+    public ResponseEntity<?> login(String userName,String userPassword) {
         try {
-            Optional<User> user= userRepository.findByEmail(userEmail);
-            if(!user.get().isRegistered())
+            Optional<User> user= userRepository.findByUsername(userName);
+          if(!user.get().isRegistered())
                 return new ResponseEntity<>("Administrator has to accept this user first...", HttpStatus.BAD_REQUEST);
+
+            String userEmail=user.get().getEmail();
+
             Authentication authObject= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userEmail, userPassword));
 
             SecurityContextHolder.getContext().setAuthentication(authObject);
@@ -118,4 +126,6 @@ public class UserService {
         userRepository.deleteAll();
         return new ResponseEntity<>("All users have been deleted!", HttpStatus.OK);
     }
+
+
 }

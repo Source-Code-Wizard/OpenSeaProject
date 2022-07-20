@@ -8,7 +8,7 @@ import java.util.Optional;
 /* this interface implements the dataBase access-layer of the application */
 @Repository
 public interface UserRepository extends JpaRepository<User,UserCompositePK> {
-    Optional<User> findByUsername(String email);
+    Optional<User> findByUsername(String username);
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
     Optional<User> findByUsernameOrEmail(String username, String email);

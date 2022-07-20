@@ -15,19 +15,42 @@ public class Bid implements Serializable {
     @OneToOne
     @JoinColumns({
             @JoinColumn(name = "BidderUserId", referencedColumnName = "UserId"),
-            @JoinColumn(name = "BidderUserAddress", referencedColumnName = "UserAddress"),
-            @JoinColumn(name = "BidderUserCountry", referencedColumnName = "UserCountry")
+          /*  @JoinColumn(name = "BidderUserAddress", referencedColumnName = "UserAddress"),
+            @JoinColumn(name = "BidderUserCountry", referencedColumnName = "UserCountry")*/
     })
     private Bidder bidder;
     private LocalDateTime localBidDateTime;
+
+    private String BidderAddress;
+
+    private String BidderCountry;
     private Integer moneyAmount;
 
     public Bid() {
     }
 
-    public Bid(LocalDateTime localBidDateTime, Integer moneyAmount) {
+    public Bid(LocalDateTime localBidDateTime, String bidderAddress, String bidderCountry, Integer moneyAmount) {
+        this.bidder = bidder;
         this.localBidDateTime = localBidDateTime;
+        BidderAddress = bidderAddress;
+        BidderCountry = bidderCountry;
         this.moneyAmount = moneyAmount;
+    }
+
+    public String getBidderAddress() {
+        return BidderAddress;
+    }
+
+    public void setBidderAddress(String bidderAddress) {
+        BidderAddress = bidderAddress;
+    }
+
+    public String getBidderCountry() {
+        return BidderCountry;
+    }
+
+    public void setBidderCountry(String bidderCountry) {
+        BidderCountry = bidderCountry;
     }
 
     public LocalDateTime getLocalBidDateTime() {

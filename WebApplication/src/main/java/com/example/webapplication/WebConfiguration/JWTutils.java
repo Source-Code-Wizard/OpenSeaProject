@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import static com.example.webapplication.WebConfiguration.SecurityConstants.*;
 import java.util.Date;
+import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
 
 @Component
@@ -24,7 +25,7 @@ public class JWTutils {
                 .compact();
     }
     public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(token).getBody().getSubject();
     }
     public boolean validateJwtToken(String authToken) {
         try {

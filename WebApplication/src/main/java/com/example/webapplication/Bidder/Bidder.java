@@ -12,12 +12,24 @@ public class Bidder implements Serializable {
     private Integer rating;
     @Id
     @OneToOne
-    @JoinColumns({
+    @JoinColumn(name = "UserId", referencedColumnName = "userId")
+    private User user;
+    /*  @JoinColumns({
             @JoinColumn(name = "UserId", referencedColumnName = "userId"),
             @JoinColumn(name = "UserAddress", referencedColumnName = "address"),
             @JoinColumn(name = "UserCountry", referencedColumnName = "Country")
-    })
-    private User user;
+    })*/
+
+
+    private String BidderAddress;
+
+    private String BidderCountry;
+
+    public Bidder(Integer rating, String bidderAddress, String bidderCountry) {
+        this.rating = rating;
+        BidderAddress = bidderAddress;
+        BidderCountry = bidderCountry;
+    }
 
     public Bidder() {
     }

@@ -28,20 +28,30 @@ public class Administrator {
             nullable = false
     )
     private String password;
+    private String email;
 
     // one to many unidirectional mapping
     // default fetch type for OneToMany: LAZY
-    @OneToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
+   // @OneToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
     // we create to user-table a new column named:Administrator_id which refers to AdminTable.adminId column
-    @JoinColumn(name = "Administrator_id", referencedColumnName = "adminId")
-    private List<User> usersList = new ArrayList<>();
+    //@JoinColumn(name = "Administrator_id", referencedColumnName = "adminId")
+    //private List<User> usersList = new ArrayList<>();
 
     public Administrator() {
     }
 
-    public Administrator(String adminName, String password) {
+    public Administrator(String adminName, String password,String email) {
         this.adminName = adminName;
         this.password = password;
+        this.email=email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Long getAdminId() {

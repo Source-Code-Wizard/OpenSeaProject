@@ -21,7 +21,6 @@ public class Role {
     private Set<User> users = new HashSet<>();*/
     public Role() {
     }
-
     public Role(String name) {
         this.name = name;
     }

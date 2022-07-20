@@ -11,7 +11,6 @@ public class UserCompositePK implements Serializable {
 
     public UserCompositePK() {
     }
-
     public UserCompositePK(String address, String country, Long userId) {
         this.address = address;
         this.country = country;

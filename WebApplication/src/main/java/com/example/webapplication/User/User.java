@@ -1,7 +1,6 @@
 package com.example.webapplication.User;
 
 import com.example.webapplication.Role.Role;
-//import com.example.webapplication.Seller.Seller;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,8 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "Users")
-@IdClass(UserCompositePK.class)
-public class User implements Serializable { //Composite primary keys require Serializible
+public class User  { //Composite primary keys require Serializible
     @Id
     @SequenceGenerator(
             name= "user_sequence", sequenceName = "user_sequence",allocationSize = 1
@@ -22,16 +20,20 @@ public class User implements Serializable { //Composite primary keys require Ser
     @Column(name="Username")
     private String username;
     private String password;
+    @Column(nullable = true)
     private String name;
+    @Column(nullable = true)
     private String subname;
     private String email;
-    private long phone_number;
-    @Id
+    @Column(nullable = true)
+    private String phone_number;
+    @Column(nullable = true)
     private String address;
+    @Column(nullable = true)
     private String AFM;
-    @Id
+    @Column(nullable = true)
     private String country;
-
+    @Column(nullable = true)
     private boolean isRegistered;
 
     public User() {
@@ -45,8 +47,9 @@ public class User implements Serializable { //Composite primary keys require Ser
         isRegistered = registered;
     }
 
+    /* Administrator constructor*/
     public User(String username, String password, String name, String subname, String email,
-                long phone_number, String address, String AFM, String country)
+                String phone_number, String address, String AFM, String country)
     {
         this.username = username;
         this.password = password;
@@ -60,16 +63,6 @@ public class User implements Serializable { //Composite primary keys require Ser
         this.isRegistered=false;
     }
     @ManyToMany(targetEntity = Role.class)
-    /* each user may have more than one roles*/
-    //@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-   /* @JoinTable(
-            name = "user_roles",
-            joinColumns = {
-                    @JoinColumn(name = "user_id",referencedColumnName = "userId",columnDefinition = "Long"),
-                    @JoinColumn(name = "user_country",referencedColumnName = "country"),
-                    @JoinColumn(name = "user_address",referencedColumnName = "address"),},
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )*/
     private Set<Role> roles = new HashSet<>();
 
     public User(String _username){
@@ -116,11 +109,11 @@ public class User implements Serializable { //Composite primary keys require Ser
         this.email = email;
     }
 
-    public long getPhone_number() {
+    public String getPhone_number() {
         return phone_number;
     }
 
-    public void setPhone_number(long phone_number) {
+    public void setPhone_number(String phone_number) {
         this.phone_number = phone_number;
     }
 

@@ -17,7 +17,7 @@ public class LoginController {
 
     @PostMapping("/api/users/login")
     public ResponseEntity<?> login(@RequestBody User user) throws Exception {
-        return userService.login(user.getEmail(), user.getPassword());
+        return userService.login(user.getUsername(), user.getPassword());
     }
 
 }

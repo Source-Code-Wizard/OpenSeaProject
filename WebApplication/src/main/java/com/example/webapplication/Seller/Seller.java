@@ -14,12 +14,7 @@ public class Seller implements Serializable {
 
     @Id
     @OneToOne
-    @JoinColumns({
-            @JoinColumn(name = "SellerId", referencedColumnName = "userId"),
-            @JoinColumn(name = "SellerAdrress", referencedColumnName = "address"),
-            @JoinColumn(name = "SellerCountry", referencedColumnName = "country"),
-    })
-
+    @JoinColumn(name = "SellerId", referencedColumnName = "userId")
     private User user;
 
     public Seller() {
