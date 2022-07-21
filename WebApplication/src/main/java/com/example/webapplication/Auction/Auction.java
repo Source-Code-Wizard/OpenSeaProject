@@ -1,11 +1,15 @@
 package com.example.webapplication.Auction;
 
 import com.example.webapplication.Bid.Bid;
+import com.example.webapplication.Category;
+import com.example.webapplication.Role.Role;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Auction")
@@ -46,6 +50,10 @@ public class Auction {
     // we create to Bid-table a new column named:Auction_itemID which refers to Auction.itemId column
     @JoinColumn(name = "Auction_itemID", referencedColumnName = "itemId")
     private List<Bid> bidList = new ArrayList<>();
+
+
+    @ManyToMany(fetch = FetchType.EAGER,targetEntity = Category.class)
+    private Set<Category> categories = new HashSet<>();
 
     public Auction(){}
 
