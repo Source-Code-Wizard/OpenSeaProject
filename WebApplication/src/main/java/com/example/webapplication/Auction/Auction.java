@@ -1,10 +1,8 @@
 package com.example.webapplication.Auction;
 
 import com.example.webapplication.Bid.Bid;
-import com.example.webapplication.Category;
-import com.example.webapplication.Role.Role;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.example.webapplication.Category.Category;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@JsonSerialize(using = LocalDateTimeSerializer.class)
 @Table(name = "Auction")
 public class Auction {
     @Id
@@ -41,9 +38,11 @@ public class Auction {
     private String location;
 
     @Column(name="Started")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime auctionStartedTime;
 
     @Column(name="Ends")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime auctionEndTime;
 
     @Column(name="description",columnDefinition="LONGTEXT",length = 65555)
@@ -60,12 +59,12 @@ public class Auction {
     @ManyToMany(fetch = FetchType.EAGER,targetEntity = Category.class)
     private Set<Category> categories = new HashSet<>();
 
+
     public Auction(){}
 
-    public Auction(Long itemId, String name, double currently, double buyPrice, double firstBid, int numOfBids,
+    public Auction(String name, double currently, double buyPrice, double firstBid, int numOfBids,
                    String location, LocalDateTime auctionStartedTime, LocalDateTime auctionEndTime,
-                   String description, List<Bid> bidList, Set<Category> categories) {
-        this.itemId = itemId;
+                   String description) {
         this.name = name;
         Currently = currently;
         this.buyPrice = buyPrice;
@@ -75,8 +74,6 @@ public class Auction {
         this.auctionStartedTime = auctionStartedTime;
         this.auctionEndTime = auctionEndTime;
         this.description = description;
-        this.bidList = bidList;
-        this.categories = categories;
     }
 
     public Long getItemId() {

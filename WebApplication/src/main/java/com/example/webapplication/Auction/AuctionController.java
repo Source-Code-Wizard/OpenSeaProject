@@ -22,7 +22,7 @@ public class AuctionController {
 
     @CrossOrigin(origins = "*")
     @PostMapping()
-    public ResponseEntity<Auction> registerAuctionToBase(@RequestBody Auction auctionForRegistration) {
+    public ResponseEntity<Auction> registerAuctionToBase(@RequestBody AuctionDTO auctionForRegistration) {
         return new ResponseEntity<>(auctionService.registerAuctionToBase(auctionForRegistration), HttpStatus.CREATED);
     }
 

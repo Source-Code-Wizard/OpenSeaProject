@@ -1,6 +1,4 @@
-package com.example.webapplication;
-
-import jdk.jfr.Enabled;
+package com.example.webapplication.Category;
 
 import javax.persistence.*;
 
@@ -10,11 +8,10 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
-    private String caterogoryName;
+    private String name;
 
-    public Category(Long categoryId, String caterogoryName) {
-        this.categoryId = categoryId;
-        this.caterogoryName = caterogoryName;
+    public Category(String caterogoryName) {
+        this.name = caterogoryName;
     }
 
     public Category() {
@@ -29,11 +26,11 @@ public class Category {
     }
 
     public String getCaterogoryName() {
-        return caterogoryName;
+        return name;
     }
 
     public void setCaterogoryName(String caterogoryName) {
-        this.caterogoryName = caterogoryName;
+        this.name = caterogoryName;
     }
 
     public Long getId() {
