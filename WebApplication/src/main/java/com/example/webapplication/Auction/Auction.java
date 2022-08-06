@@ -3,6 +3,8 @@ package com.example.webapplication.Auction;
 import com.example.webapplication.Bid.Bid;
 import com.example.webapplication.Category;
 import com.example.webapplication.Role.Role;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@JsonSerialize(using = LocalDateTimeSerializer.class)
 @Table(name = "Auction")
 public class Auction {
     @Id
@@ -22,10 +25,11 @@ public class Auction {
     @GeneratedValue( strategy = GenerationType.SEQUENCE,generator = "user_sequence")
     private Long itemId;
 
+    @Column(columnDefinition="LONGTEXT",length = 65555)
     private String name;
-    private String category;
+
     @Column(name="Currently")
-    private double currentOffer;
+    private double Currently;
 
     private double buyPrice;
 
@@ -33,6 +37,7 @@ public class Auction {
 
     private int numOfBids;
 
+    @Column(columnDefinition="LONGTEXT",length = 65555)
     private String location;
 
     @Column(name="Started")
@@ -41,7 +46,7 @@ public class Auction {
     @Column(name="Ends")
     private LocalDateTime auctionEndTime;
 
-    @Column(name="Description")
+    @Column(name="description",columnDefinition="LONGTEXT",length = 65555)
     private String description;
 
     // one to many unidirectional mapping
@@ -57,13 +62,12 @@ public class Auction {
 
     public Auction(){}
 
-    public Auction(Long itemId, String name, String category, double currentOffer, double buyPrice,
-                   double firstBid, int numOfBids, String location, LocalDateTime auctionStartedTime,
-                   LocalDateTime auctionEndTime, String description) {
+    public Auction(Long itemId, String name, double currently, double buyPrice, double firstBid, int numOfBids,
+                   String location, LocalDateTime auctionStartedTime, LocalDateTime auctionEndTime,
+                   String description, List<Bid> bidList, Set<Category> categories) {
         this.itemId = itemId;
         this.name = name;
-        this.category = category;
-        this.currentOffer = currentOffer;
+        Currently = currently;
         this.buyPrice = buyPrice;
         this.firstBid = firstBid;
         this.numOfBids = numOfBids;
@@ -71,6 +75,8 @@ public class Auction {
         this.auctionStartedTime = auctionStartedTime;
         this.auctionEndTime = auctionEndTime;
         this.description = description;
+        this.bidList = bidList;
+        this.categories = categories;
     }
 
     public Long getItemId() {
@@ -89,20 +95,28 @@ public class Auction {
         this.name = name;
     }
 
-    public String getCategory() {
-        return category;
+    public double getCurrently() {
+        return Currently;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCurrently(double currently) {
+        Currently = currently;
     }
 
-    public double getCurrentOffer() {
-        return currentOffer;
+    public List<Bid> getBidList() {
+        return bidList;
     }
 
-    public void setCurrentOffer(double currentOffer) {
-        this.currentOffer = currentOffer;
+    public void setBidList(List<Bid> bidList) {
+        this.bidList = bidList;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
     }
 
     public double getBuyPrice() {

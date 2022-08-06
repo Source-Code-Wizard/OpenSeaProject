@@ -12,7 +12,6 @@ public class Category {
     private Long categoryId;
     private String caterogoryName;
 
-
     public Category(Long categoryId, String caterogoryName) {
         this.categoryId = categoryId;
         this.caterogoryName = caterogoryName;
