@@ -46,7 +46,8 @@ public class UserService {
 
     @Autowired
     public UserService(UserRepository userRepository, AuthenticationManager authenticationManager,
-                       BCryptPasswordEncoder passwordEncoder , RoleRepository roleRepository,AdminRepository adminRepository) {
+                       BCryptPasswordEncoder passwordEncoder , RoleRepository roleRepository,
+                       AdminRepository adminRepository) {
         this.userRepository = userRepository;
         this.authenticationManager=authenticationManager;
         this.passwordEncoder=passwordEncoder;
@@ -107,7 +108,7 @@ public class UserService {
         //first we need to convert the password to a bcrypt password type!
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        /* Assign user permission to new user!*/
+        /* Assign permissions to new user!*/
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName("USER");
         Role sellerRole = roleRepository.findByName("SELLER");

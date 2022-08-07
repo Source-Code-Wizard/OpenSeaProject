@@ -28,6 +28,7 @@ public class AuctionService {
 
     public Auction registerAuctionToBase(AuctionDTO auctionDTO) {
 
+        /* we retrive the information from the token payload and then register to base! */
         Auction auctionForRegistration = new Auction(
                 auctionDTO.getName(),auctionDTO.getCurrently(),auctionDTO.getBuyPrice(),
                 auctionDTO.getFirstBid(),auctionDTO.getNumOfBids(),auctionDTO.getLocation(),
@@ -36,6 +37,7 @@ public class AuctionService {
         List<String> categories =auctionDTO.getListOfCategories();
         Set<Category> categorySet = new HashSet<>();
 
+        /* we add the categories */
         for (int categoryIndex = 0; categoryIndex < categories.size(); categoryIndex++) {
             String categoryName = categories.get(categoryIndex);
             Category category = categoryRepository.findByName(categoryName);
@@ -45,6 +47,7 @@ public class AuctionService {
 
         auctionForRegistration.setCategories(categorySet);
 
+        /* save the complete auction to the dataBase! */
         return auctionRepository.save(auctionForRegistration);
     }
 
@@ -56,5 +59,21 @@ public class AuctionService {
     public ResponseEntity<?> deleteAuction(Auction auctionToDelete){
         auctionRepository.deleteById(auctionToDelete.getItemId());
         return new ResponseEntity<>("Auction has been deleted!", HttpStatus.OK);
+    }
+
+    public List<Auction>searchForAuction(String categoryName, Double price, String auctionLocation){
+
+        AuctionSpecification auctionSpecification = new AuctionSpecification();
+
+        if (!categoryName.isBlank() && categoryName!=null){
+            auctionSpecification.add(new SearchCriteria("categories",categoryName,SearchOperation.IN));
+        }
+        if (price!=null){
+            auctionSpecification.add(new SearchCriteria("currently",price,SearchOperation.LESS_THAN));
+        }
+        if(auctionLocation.isBlank() && auctionLocation!=null){
+            auctionSpecification.add(new SearchCriteria("location",auctionLocation,SearchOperation.MATCH));
+        }
+        return auctionRepository.findAll(auctionSpecification);
     }
 }

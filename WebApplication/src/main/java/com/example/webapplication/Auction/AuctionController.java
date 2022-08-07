@@ -31,6 +31,14 @@ public class AuctionController {
         return auctionService.getAllActiveAuctions();
     }
 
+    @GetMapping("/search")
+    public List<Auction> searchForAuctions(@RequestParam(required = false)String category,
+                                           @RequestParam(required = false)Double price,
+                                           @RequestParam(required = false)String location)
+    {
+            return auctionService.searchForAuction(category,price,location);
+    }
+
     @CrossOrigin(origins = "*")
     @PreAuthorize("hasAuthority('AUCTION')")
     @DeleteMapping("/deleteAuction")
