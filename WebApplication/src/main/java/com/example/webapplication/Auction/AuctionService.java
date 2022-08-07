@@ -40,6 +40,7 @@ public class AuctionService {
             String categoryName = categories.get(categoryIndex);
             Category category = categoryRepository.findByName(categoryName);
             categorySet.add(category);
+            System.out.println("Print message: "+category.toString());
         }
 
         auctionForRegistration.setCategories(categorySet);

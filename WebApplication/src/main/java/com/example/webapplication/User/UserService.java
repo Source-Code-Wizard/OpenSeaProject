@@ -110,6 +110,10 @@ public class UserService {
         /* Assign user permission to new user!*/
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName("USER");
+        Role sellerRole = roleRepository.findByName("SELLER");
+        Role bidderRole = roleRepository.findByName("BIDDER");
+        roles.add(bidderRole);
+        roles.add(sellerRole);
         roles.add(userRole);
         user.setRoles(roles);
 

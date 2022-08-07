@@ -16,6 +16,7 @@ public class SignUpController {
 
     @PostMapping("/api/users/signup")
     public ResponseEntity<?> signUp(@RequestBody User user) throws Exception {
-        return userService.signUp(user);
+       // return userService.signUp(user);
+        return new ResponseEntity<>(userService.signUp(user), HttpStatus.CREATED);
     }
 }

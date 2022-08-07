@@ -14,6 +14,14 @@ public class Category {
         this.name = caterogoryName;
     }
 
+    @Override
+    public String toString() {
+        return "Category{" +
+                "categoryId=" + categoryId +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
     public Category() {
     }
 
@@ -33,7 +41,4 @@ public class Category {
         this.name = caterogoryName;
     }
 
-    public Long getId() {
-        return categoryId;
-    }
 }
