@@ -10,10 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class AuctionService {
@@ -57,8 +54,35 @@ public class AuctionService {
     }
 
     public ResponseEntity<?> deleteAuction(Auction auctionToDelete){
-        auctionRepository.deleteById(auctionToDelete.getItemId());
-        return new ResponseEntity<>("Auction has been deleted!", HttpStatus.OK);
+        if(auctionToDelete.getAuctionStartedTime().isAfter(LocalDateTime.now()) || auctionToDelete.getNumOfBids() == 0){
+            auctionRepository.deleteById(auctionToDelete.getItemId());
+            return new ResponseEntity<>("Auction has been deleted!", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("This auction can't be deleted!", HttpStatus.BAD_REQUEST);
+    }
+
+    public  ResponseEntity<?> editAuction(Auction auctionToEdit){
+        Optional<Auction> existingAuction = auctionRepository.findById(auctionToEdit.getItemId());
+        if(existingAuction.isPresent()){
+            Auction pure = existingAuction.get();
+            if(pure.getAuctionStartedTime().isAfter(LocalDateTime.now()) || pure.getNumOfBids() == 0){
+                pure.setName(auctionToEdit.getName());
+                pure.setAuctionEndTime(auctionToEdit.getAuctionEndTime());
+                pure.setAuctionStartedTime(auctionToEdit.getAuctionStartedTime());
+                pure.setCategories(auctionToEdit.getCategories());
+                pure.setCurrently(auctionToEdit.getCurrently());
+                pure.setBidList(auctionToEdit.getBidList());
+                pure.setBuyPrice(auctionToEdit.getBuyPrice());
+                pure.setDescription(auctionToEdit.getDescription());
+                pure.setFirstBid(auctionToEdit.getFirstBid());
+                pure.setLocation(auctionToEdit.getLocation());
+                pure.setNumOfBids(auctionToEdit.getNumOfBids());
+                return new ResponseEntity<>("Auction has been edited!", HttpStatus.OK);
+            }
+            return new ResponseEntity<>("This auction can't be edited!", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("This auction doesn't exist!", HttpStatus.BAD_REQUEST);
     }
 
     public List<Auction>searchForAuction(String categoryName, Double price, String auctionLocation){
