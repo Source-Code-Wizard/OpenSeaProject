@@ -2,13 +2,15 @@ package com.example.webapplication.Auction;
 
 import com.example.webapplication.Category.Category;
 import com.example.webapplication.Category.CategoryRepository;
-import com.example.webapplication.User.User;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Join;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -85,19 +87,37 @@ public class AuctionService {
         return new ResponseEntity<>("This auction doesn't exist!", HttpStatus.BAD_REQUEST);
     }
 
-    public List<Auction>searchForAuction(String categoryName, Double price, String auctionLocation){
+    public Map<String, Object>searchForAuction(String categoryName, Double price, String auctionLocation,String description){
+
+        Pageable pageable = PageRequest.of(0, 5);
 
         AuctionSpecification auctionSpecification = new AuctionSpecification();
-
-        if (!categoryName.isBlank() && categoryName!=null){
-            auctionSpecification.add(new SearchCriteria("categories",categoryName,SearchOperation.IN));
+        List<Auction> Auctions = new ArrayList<Auction>();
+        System.out.println("CATEGOTY IS "+categoryName);
+        /* we search based on the parameteres the user gave as input */
+        if (categoryName!=null){
+            System.out.println(categoryName);
+           auctionSpecification.add(new SearchCriteria("categories",categoryName,SearchOperation.JOIN));
         }
         if (price!=null){
             auctionSpecification.add(new SearchCriteria("currently",price,SearchOperation.LESS_THAN));
         }
-        if(auctionLocation.isBlank() && auctionLocation!=null){
+        if(auctionLocation!=null){
             auctionSpecification.add(new SearchCriteria("location",auctionLocation,SearchOperation.MATCH));
         }
-        return auctionRepository.findAll(auctionSpecification);
+        if(description!=null){
+            auctionSpecification.add(new SearchCriteria("description",description,SearchOperation.MATCH));
+        }
+        Page<Auction> pageWithResults = auctionRepository.findAll(auctionSpecification,pageable);
+        /* getContent() returns ONLY a list with the pages we need */
+        Auctions = pageWithResults.getContent();
+
+        /* As a response, the server sends a map that contains the following attributes! */
+        Map<String, Object> response = new HashMap<>();
+        response.put("tutorials", Auctions);
+        response.put("currentPage", pageWithResults.getNumber());
+        response.put("totalItems", pageWithResults.getTotalElements());
+        response.put("totalPages", pageWithResults.getTotalPages());
+        return response;
     }
 }

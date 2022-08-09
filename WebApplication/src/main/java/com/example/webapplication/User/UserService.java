@@ -74,7 +74,6 @@ public class UserService {
           if(!user.get().isRegistered())
                 return new ResponseEntity<>("Administrator has to accept this user first...", HttpStatus.BAD_REQUEST);
 
-            //String userEmail=user.get().getEmail();
             Authentication authObject= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, userPassword));
 
             SecurityContextHolder.getContext().setAuthentication(authObject);
