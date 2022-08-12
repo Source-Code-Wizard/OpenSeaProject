@@ -54,8 +54,8 @@ public class AuctionService {
     }
 
     public ResponseEntity<?> deleteAuction(Auction auctionToDelete){
-        if(auctionToDelete.getAuctionStartedTime().isAfter(LocalDateTime.now()) || auctionToDelete.getNumOfBids() == 0){
-            auctionRepository.deleteById(auctionToDelete.getItemId());
+        if(auctionToDelete.getAuctionStartedTime().isAfter(LocalDateTime.now()) || (auctionToDelete.getNumOfBids() == 0)){
+            auctionRepository.delete(auctionToDelete);
             return new ResponseEntity<>("Auction has been deleted!", HttpStatus.OK);
         }
 
@@ -78,6 +78,7 @@ public class AuctionService {
                 pure.setFirstBid(auctionToEdit.getFirstBid());
                 pure.setLocation(auctionToEdit.getLocation());
                 pure.setNumOfBids(auctionToEdit.getNumOfBids());
+                auctionRepository.save(pure);
                 return new ResponseEntity<>("Auction has been edited!", HttpStatus.OK);
             }
             return new ResponseEntity<>("This auction can't be edited!", HttpStatus.BAD_REQUEST);

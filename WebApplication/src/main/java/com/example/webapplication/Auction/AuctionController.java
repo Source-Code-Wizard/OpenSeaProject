@@ -40,14 +40,12 @@ public class AuctionController {
     }
 
     @CrossOrigin(origins = "*")
-    @PreAuthorize("hasAuthority('AUCTION')")
     @DeleteMapping("/deleteAuction")
     public ResponseEntity<?> deleteAuction(@RequestBody Auction auctionForDelete){
         return new ResponseEntity<>(auctionService.deleteAuction(auctionForDelete),HttpStatus.OK);
     }
 
     @CrossOrigin(origins = "*")
-    @PreAuthorize("hasAuthority('AUCTION')")
     @PostMapping("/editAuction")
     public ResponseEntity<?> editAuction(@RequestBody Auction auctionToEdit){
         return new ResponseEntity<>(auctionService.editAuction(auctionToEdit),HttpStatus.OK);
