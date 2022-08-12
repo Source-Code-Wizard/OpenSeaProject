@@ -1,7 +1,9 @@
 package com.example.webapplication.Auction;
 
 import com.example.webapplication.User.User;
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,11 +34,12 @@ public class AuctionController {
     }
 
     @GetMapping("/search")
-    public List<Auction> searchForAuctions(@RequestParam(required = false)String category,
-                                           @RequestParam(required = false)Double price,
-                                           @RequestParam(required = false)String location)
+    public Map<String, Object> searchForAuctions(@RequestParam(required = false)String category,
+                                                 @RequestParam(required = false)Double price,
+                                                 @RequestParam(required = false)String location,
+                                                 @RequestParam(required = false)String description)
     {
-            return auctionService.searchForAuction(category,price,location);
+        return auctionService.searchForAuction(category,price,location,description);
     }
 
     @CrossOrigin(origins = "*")
@@ -49,6 +52,5 @@ public class AuctionController {
     @PostMapping("/editAuction")
     public ResponseEntity<?> editAuction(@RequestBody Auction auctionToEdit){
         return new ResponseEntity<>(auctionService.editAuction(auctionToEdit),HttpStatus.OK);
-
     }
 }
