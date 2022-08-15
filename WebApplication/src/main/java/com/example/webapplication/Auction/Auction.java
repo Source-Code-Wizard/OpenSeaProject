@@ -90,4 +90,19 @@ public class Auction {
         this.description = description;
     }
 
+    public Auction(long id, String name, double currently, double buyPrice, double firstBid, int numOfBids,
+                   String location, LocalDateTime auctionStartedTime, LocalDateTime auctionEndTime,
+                   String description) {
+        this.itemId = id;
+        this.name = name;
+        Currently = currently;
+        this.buyPrice = buyPrice;
+        this.firstBid = firstBid;
+        this.numOfBids = numOfBids;
+        this.location = location;
+        this.auctionStartedTime = auctionStartedTime;
+        this.auctionEndTime = auctionEndTime;
+        this.description = description;
+    }
+
 }

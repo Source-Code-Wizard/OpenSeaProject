@@ -14,7 +14,7 @@ import java.util.List;
 
 @Repository
 public interface AuctionRepository extends JpaRepository<Auction,Long> , JpaSpecificationExecutor<Auction>, PagingAndSortingRepository<Auction, Long> {
-    @Query(nativeQuery = true, value="select a.auctionEndTime, from Auction a where a.auctionEndTime after :now")
+    @Query("SELECT a.auctionEndTime FROM Auction a WHERE a.auctionEndTime >= :now")
     List<Auction> findAllWithAuctionEndTimeAfter(@Param("now") LocalDateTime now);
 
     Page<Auction> findAll(Specification<Auction> sp, Pageable pageable);
