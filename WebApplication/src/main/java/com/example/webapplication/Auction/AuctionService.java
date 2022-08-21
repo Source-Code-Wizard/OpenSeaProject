@@ -98,7 +98,7 @@ public class AuctionService {
         /* we search based on the parameteres the user gave as input */
         if (categoryName!=null){
             System.out.println(categoryName);
-           auctionSpecification.add(new SearchCriteria("categories",categoryName,SearchOperation.JOIN));
+            auctionSpecification.add(new SearchCriteria("categories",categoryName,SearchOperation.JOIN));
         }
         if (price!=null){
             auctionSpecification.add(new SearchCriteria("currently",price,SearchOperation.LESS_THAN));
