@@ -22,7 +22,7 @@ public class AuctionController {
         this.auctionService = auctionService;
     }
 
-    @CrossOrigin(origins = "*")
+
     @PostMapping()
     public ResponseEntity<Auction> registerAuctionToBase(@RequestBody AuctionDTO auctionForRegistration) {
         return new ResponseEntity<>(auctionService.registerAuctionToBase(auctionForRegistration), HttpStatus.CREATED);
@@ -33,7 +33,14 @@ public class AuctionController {
         return auctionService.getAllActiveAuctions();
     }
 
+    @CrossOrigin(origins = "https://localhost:3000/OpensSea/Auctions",allowCredentials = "true")
+    @GetMapping("/getAuction/{auctionId}")
+    public ResponseEntity<?> getSpecificAuction(@PathVariable("auctionId") String auctionId){
+        return auctionService.getSpecificAuction(Long.parseLong(auctionId));
+    }
+
     @GetMapping("/search")
+    @CrossOrigin(origins = "https://localhost:3000",allowCredentials = "true")
     public Map<String, Object> searchForAuctions(@RequestParam(required = false)String category,
                                                  @RequestParam(required = false)Double price,
                                                  @RequestParam(required = false)String location,
@@ -42,13 +49,13 @@ public class AuctionController {
         return auctionService.searchForAuction(category,price,location,description);
     }
 
-    @CrossOrigin(origins = "*")
+
     @DeleteMapping("/deleteAuction")
     public ResponseEntity<?> deleteAuction(@RequestBody Auction auctionForDelete){
         return new ResponseEntity<>(auctionService.deleteAuction(auctionForDelete),HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "*")
+
     @PostMapping("/editAuction")
     public ResponseEntity<?> editAuction(@RequestBody Auction auctionToEdit){
         return new ResponseEntity<>(auctionService.editAuction(auctionToEdit),HttpStatus.OK);

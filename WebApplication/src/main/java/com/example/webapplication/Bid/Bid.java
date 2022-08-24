@@ -20,9 +20,7 @@ public class Bid implements Serializable {
     })
     private Bidder bidder;
     private LocalDateTime localBidDateTime;
-
     private String BidderAddress;
-
     private String BidderCountry;
     private Integer moneyAmount;
 

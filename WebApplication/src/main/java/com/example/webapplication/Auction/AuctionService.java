@@ -25,6 +25,13 @@ public class AuctionService {
         this.categoryRepository=categoryRepository;
     }
 
+    public  ResponseEntity<?> getSpecificAuction(Long auctionId){
+       Optional<Auction> optionalAuction= auctionRepository.findById(auctionId);
+       if (optionalAuction.isPresent()){
+           return new ResponseEntity<>(optionalAuction.get(), HttpStatus.OK);
+       }
+        return new ResponseEntity<>("No auction available", HttpStatus.BAD_REQUEST);
+    }
     public Auction registerAuctionToBase(AuctionDTO auctionDTO) {
 
         /* we retrive the information from the token payload and then register to base! */
@@ -94,7 +101,7 @@ public class AuctionService {
 
         AuctionSpecification auctionSpecification = new AuctionSpecification();
         List<Auction> Auctions = new ArrayList<Auction>();
-        System.out.println("CATEGOTY IS "+categoryName);
+        System.out.println("CATEGORY IS "+categoryName);
         /* we search based on the parameteres the user gave as input */
         if (categoryName!=null){
             System.out.println(categoryName);
@@ -115,7 +122,7 @@ public class AuctionService {
 
         /* As a response, the server sends a map that contains the following attributes! */
         Map<String, Object> response = new HashMap<>();
-        response.put("tutorials", Auctions);
+        response.put("Auctions", Auctions);
         response.put("currentPage", pageWithResults.getNumber());
         response.put("totalItems", pageWithResults.getTotalElements());
         response.put("totalPages", pageWithResults.getTotalPages());

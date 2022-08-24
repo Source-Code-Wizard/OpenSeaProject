@@ -2,6 +2,7 @@ package com.example.webapplication.Auction;
 
 import com.example.webapplication.Bid.Bid;
 import com.example.webapplication.Category.Category;
+import com.example.webapplication.Seller.Seller;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -58,6 +59,10 @@ public class Auction {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime auctionEndTime;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id" /*nullable = false*/)
+    private Seller seller;
 
     @Column(name="description",columnDefinition="LONGTEXT",length = 65555)
     private String description;

@@ -1,6 +1,7 @@
 package com.example.webapplication.User;
 
 import com.example.webapplication.Role.Role;
+import com.example.webapplication.Seller.Seller;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -35,6 +36,11 @@ public class User  { //Composite primary keys require Serializible
     private String country;
     @Column(nullable = true)
     private boolean isRegistered;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private Seller seller;
+
 
     public User() {
     }
