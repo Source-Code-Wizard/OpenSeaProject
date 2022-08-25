@@ -65,6 +65,10 @@ public class Bid implements Serializable {
         return moneyAmount;
     }
 
+    public Bidder getBidder() {
+        return bidder;
+    }
+
     public void setMoneyAmount(Integer moneyAmount) {
         this.moneyAmount = moneyAmount;
     }

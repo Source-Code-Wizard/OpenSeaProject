@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,5 +54,14 @@ public class AuctionController {
     @PostMapping("/editAuction")
     public ResponseEntity<?> editAuction(@RequestBody Auction auctionToEdit){
         return new ResponseEntity<>(auctionService.editAuction(auctionToEdit),HttpStatus.OK);
+    }
+
+    @MessageMapping("/chat/{receiver}")
+//    public ResponseEntity<?> sellerSendsMessageAfterAuction(@RequestBody Auction auction, @RequestBody String message){
+//        return new ResponseEntity<>(auctionService.sellerSendsMessageAfterAuction(auction, message), HttpStatus.OK);
+//    }
+
+    public ResponseEntity<?> bidderSendsMessageAfterAuction(@RequestBody Auction auction, @RequestBody String message){
+        return new ResponseEntity<>(auctionService.bidderSendsMessageAfterAuction(auction, message), HttpStatus.OK);
     }
 }

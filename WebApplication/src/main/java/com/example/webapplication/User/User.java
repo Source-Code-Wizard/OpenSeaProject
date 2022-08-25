@@ -1,10 +1,13 @@
 package com.example.webapplication.User;
 
+import com.example.webapplication.Message.Message;
 import com.example.webapplication.Role.Role;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -35,6 +38,32 @@ public class User  { //Composite primary keys require Serializible
     private String country;
     @Column(nullable = true)
     private boolean isRegistered;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY )
+    private List<Message> inbox = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY )
+    private List<Message> outbox = new ArrayList<>();
+
+    public List<Message> getInbox() {
+        return inbox;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setInbox(List<Message> inbox) {
+        this.inbox = inbox;
+    }
+
+    public List<Message> getOutbox() {
+        return outbox;
+    }
+
+    public void setOutbox(List<Message> outbox) {
+        this.outbox = outbox;
+    }
 
     public User() {
     }

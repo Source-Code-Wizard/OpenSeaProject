@@ -17,5 +17,8 @@ public interface AuctionRepository extends JpaRepository<Auction,Long> , JpaSpec
     @Query("SELECT a.auctionEndTime FROM Auction a WHERE a.auctionEndTime >= :now")
     List<Auction> findAllWithAuctionEndTimeAfter(@Param("now") LocalDateTime now);
 
+//    @Query("SELECT a.seller_id FROM Auction a WHERE a.item_id = :auction_id")
+//    Long getSellerId(@Param("auction_id") Long auction_id);
+
     Page<Auction> findAll(Specification<Auction> sp, Pageable pageable);
 }

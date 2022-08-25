@@ -2,6 +2,8 @@ package com.example.webapplication.Auction;
 
 import com.example.webapplication.Bid.Bid;
 import com.example.webapplication.Category.Category;
+import com.example.webapplication.Seller.Seller;
+import com.example.webapplication.User.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -73,6 +75,17 @@ public class Auction {
     @ManyToMany(fetch = FetchType.EAGER,targetEntity = Category.class)
     private Set<Category> categories = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "seller_id", nullable = false)
+    private Seller seller;
+
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
 
     public Auction(){}
 

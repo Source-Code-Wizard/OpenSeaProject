@@ -1,7 +1,14 @@
 package com.example.webapplication.Auction;
 
+import com.example.webapplication.Bid.Bid;
+import com.example.webapplication.Bidder.Bidder;
 import com.example.webapplication.Category.Category;
 import com.example.webapplication.Category.CategoryRepository;
+import com.example.webapplication.Message.Message;
+import com.example.webapplication.Message.MessageService;
+import com.example.webapplication.Seller.Seller;
+import com.example.webapplication.User.User;
+import com.example.webapplication.User.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
 
 import javax.persistence.criteria.Join;
 import java.time.LocalDateTime;
@@ -19,10 +28,16 @@ public class AuctionService {
     private final AuctionRepository auctionRepository;
     private final CategoryRepository categoryRepository;
 
+    private final UserRepository userRepository;
+
+    private final MessageService messageService;
+
     @Autowired
-    public AuctionService(AuctionRepository auctionRepository,CategoryRepository categoryRepository) {
+    public AuctionService(AuctionRepository auctionRepository,CategoryRepository categoryRepository, UserRepository userRepository, MessageService messageService) {
         this.auctionRepository = auctionRepository;
         this.categoryRepository=categoryRepository;
+        this.userRepository = userRepository;
+        this.messageService = messageService;
     }
 
     public Auction registerAuctionToBase(AuctionDTO auctionDTO) {
@@ -120,5 +135,75 @@ public class AuctionService {
         response.put("totalItems", pageWithResults.getTotalElements());
         response.put("totalPages", pageWithResults.getTotalPages());
         return response;
+    }
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+//    public ResponseEntity<?> sellerSendsMessageAfterAuction(Auction auction, String message){
+//        Optional<Auction> existingAuction = auctionRepository.findById(auction.getItemId());
+//        if(existingAuction.isPresent()){
+//            Auction newAuction = existingAuction.get();
+//            if(newAuction.getAuctionEndTime().isBefore(LocalDateTime.now())){
+//                if(auction.getNumOfBids() > 0){
+//                    Long sellerId = auctionRepository.getSellerId(auction.getItemId());
+//                    Optional<User> seller = userRepository.findById(sellerId);
+//                    if(seller.isPresent()){
+//                        User seller1 = seller.get();
+//                        String sellerName = seller1.getName();
+//
+//                        List<Bid> bids = auction.getBidList();
+//                        Optional<Bid> maxBid = bids.stream().max(Comparator.comparing(Bid::getMoneyAmount));
+//
+//                        if(maxBid.isPresent()){
+//                            Bid bid = maxBid.get();
+//                            String bidderName = bid.getBidder().getUser().getName();
+//                            Message message1 = new Message(message, sellerName, bidderName);
+//                            simpMessagingTemplate.convertAndSendToUser(message1.getReceiver(),"/chat/message", message);
+//                            return new ResponseEntity<>("Message was sent.", HttpStatus.OK);
+//
+//                        }
+//                        return new ResponseEntity<>("Bidder doss mot exist!.", HttpStatus.BAD_REQUEST);
+//                    }
+//                    return new ResponseEntity<>("Seller does not exist!", HttpStatus.BAD_REQUEST);
+//                }
+//                return new ResponseEntity<>("This auction has no bids.", HttpStatus.BAD_REQUEST);
+//            }
+//            return new ResponseEntity<>("This auction has not ended yet.", HttpStatus.BAD_REQUEST);
+//        }
+//        return new ResponseEntity<>("This auction doesn't exist!", HttpStatus.BAD_REQUEST);
+//    }
+
+    public ResponseEntity<?> bidderSendsMessageAfterAuction(Auction auction, String message){
+        Optional<Auction> existingAuction = auctionRepository.findById(auction.getItemId());
+        if(existingAuction.isPresent()){
+            Auction newAuction = existingAuction.get();
+            if(newAuction.getAuctionEndTime().isBefore(LocalDateTime.now())){
+                if(auction.getNumOfBids() > 0){
+//                    Long sellerId = auctionRepository.getSellerId(auction.getItemId());
+//                    Optional<User> seller = userRepository.findById(sellerId);
+                    Seller seller = auction.getSeller();
+                    if(true){
+                        System.out.print(seller.getRating());
+//                        return new ResponseEntity<>("Bidder doss mot exist!.", HttpStatus.BAD_REQUEST);
+
+                        String sellerName = seller.;
+
+//                        List<Bid> bids = auction.getBidList();
+//                        Optional<Bid> maxBid = bids.stream().max(Comparator.comparing(Bid::getMoneyAmount));
+//                        if(maxBid.isPresent()){
+//                            Bid bid = maxBid.get();
+//                            String bidderName = bid.getBidder().getUser().getName();
+//                            Message message1 = new Message(message, bidderName, sellerName);
+//                            simpMessagingTemplate.convertAndSendToUser(message1.getReceiver(),"/chat/message", message);
+//                        }
+//                        return new ResponseEntity<>("Bidder doss mot exist!.", HttpStatus.BAD_REQUEST);
+                    }
+                    return new ResponseEntity<>("Seller does not exist!", HttpStatus.BAD_REQUEST);
+                }
+                return new ResponseEntity<>("This auction has no bids.", HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity<>("This auction has not ended yet.", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("This auction doesn't exist!", HttpStatus.BAD_REQUEST);
     }
 }

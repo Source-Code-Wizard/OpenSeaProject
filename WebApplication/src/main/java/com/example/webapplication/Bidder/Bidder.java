@@ -34,6 +34,10 @@ public class Bidder implements Serializable {
     public Bidder() {
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public Bidder(Integer rating) {
         this.rating = rating;
     }
