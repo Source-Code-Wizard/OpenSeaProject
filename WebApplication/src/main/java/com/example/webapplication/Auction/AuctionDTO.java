@@ -40,9 +40,11 @@ public class AuctionDTO {
 
     private List<String> listOfCategories = new ArrayList<>();
 
+    private Long seller_id;
+
     public AuctionDTO(String name, double currently, double buyPrice, double firstBid, int numOfBids,
                       String location, LocalDateTime auctionStartedTime, LocalDateTime auctionEndTime,
-                      String description, List<String> listOfCategories) {
+                      String description, Long seller_id ,List<String> listOfCategories) {
         this.name = name;
         Currently = currently;
         this.buyPrice = buyPrice;
@@ -53,5 +55,6 @@ public class AuctionDTO {
         this.auctionEndTime = auctionEndTime;
         this.description = description;
         this.listOfCategories = listOfCategories;
+        this.seller_id=seller_id;
     }
 }

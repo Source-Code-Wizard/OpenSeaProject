@@ -2,6 +2,10 @@ package com.example.webapplication.Auction;
 
 import com.example.webapplication.Category.Category;
 import com.example.webapplication.Category.CategoryRepository;
+import com.example.webapplication.Seller.Seller;
+import com.example.webapplication.Seller.SellerRepository;
+import com.example.webapplication.User.User;
+import com.example.webapplication.User.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +22,17 @@ import java.util.*;
 public class AuctionService {
     private final AuctionRepository auctionRepository;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
+
+    private final SellerRepository sellerRepository;
 
     @Autowired
-    public AuctionService(AuctionRepository auctionRepository,CategoryRepository categoryRepository) {
+    public AuctionService(AuctionRepository auctionRepository,CategoryRepository categoryRepository,
+                          UserRepository userRepository,SellerRepository sellerRepository) {
         this.auctionRepository = auctionRepository;
         this.categoryRepository=categoryRepository;
+        this.userRepository=userRepository;
+        this.sellerRepository=sellerRepository;
     }
 
     public  ResponseEntity<?> getSpecificAuction(Long auctionId){
@@ -33,6 +43,21 @@ public class AuctionService {
         return new ResponseEntity<>("No auction available", HttpStatus.BAD_REQUEST);
     }
     public Auction registerAuctionToBase(AuctionDTO auctionDTO) {
+
+
+        System.out.println(auctionDTO.getSeller_id());
+
+        //Seller seller = new Seller(0,auctionDTO.getSeller_id());
+
+        Optional<Seller> optionalSeller = sellerRepository.findById(auctionDTO.getSeller_id());
+        Seller seller;
+        List<Auction> sellersAuctionList;
+        if (optionalSeller.isPresent()){
+            seller=optionalSeller.get();
+        }else{
+            seller = new Seller(0,auctionDTO.getSeller_id());
+        }
+        sellersAuctionList=seller.getSellersAuctions();
 
         /* we retrive the information from the token payload and then register to base! */
         Auction auctionForRegistration = new Auction(
@@ -52,6 +77,24 @@ public class AuctionService {
         }
 
         auctionForRegistration.setCategories(categorySet);
+
+        /* we update seller's list and we save seller to the database*/
+        sellersAuctionList.add(auctionForRegistration);
+        seller.setSellersAuctions(sellersAuctionList);
+
+
+        /* we update the one to one (User-Seller) relationship with the latest updates*/
+        Optional<User> userWhoIsAlsoSeller = userRepository.findById(auctionDTO.getSeller_id());
+        if (userWhoIsAlsoSeller.isPresent()){
+            User userWhoIsAlsoSellerPure = userWhoIsAlsoSeller.get();
+            seller.setUser(userWhoIsAlsoSellerPure);
+            userWhoIsAlsoSellerPure.setSeller(seller);
+        }
+        /* save seller to database! */
+        sellerRepository.save(seller);
+
+        /* we set the seller of this auction! */
+        auctionForRegistration.setSeller(seller);
 
         /* save the complete auction to the dataBase! */
         return auctionRepository.save(auctionForRegistration);
