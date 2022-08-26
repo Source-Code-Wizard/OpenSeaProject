@@ -10,14 +10,9 @@ import java.util.Objects;
 @Entity
 @Table
 public class Bid implements Serializable {
-
     @Id
     @OneToOne
-    @JoinColumns({
-            @JoinColumn(name = "BidderUserId", referencedColumnName = "UserId"),
-          /*  @JoinColumn(name = "BidderUserAddress", referencedColumnName = "UserAddress"),
-            @JoinColumn(name = "BidderUserCountry", referencedColumnName = "UserCountry")*/
-    })
+    @JoinColumn(name = "BidderUserId", referencedColumnName = "UserId")
     private Bidder bidder;
     private LocalDateTime localBidDateTime;
     private String BidderAddress;

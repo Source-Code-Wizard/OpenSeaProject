@@ -42,8 +42,7 @@ public class AuctionService {
        }
         return new ResponseEntity<>("No auction available", HttpStatus.BAD_REQUEST);
     }
-    public Auction registerAuctionToBase(AuctionDTO auctionDTO) {
-
+    public ResponseEntity<?> registerAuctionToBase(AuctionDTO auctionDTO) {
 
         System.out.println(auctionDTO.getSeller_id());
 
@@ -78,8 +77,13 @@ public class AuctionService {
 
         auctionForRegistration.setCategories(categorySet);
 
+        List<Auction> updatedSellerAuctionList = new ArrayList<>();
+        for (int i = 0; i <sellersAuctionList.size() ; i++) {
+            updatedSellerAuctionList.add(sellersAuctionList.get(i));
+        }
+
         /* we update seller's list and we save seller to the database*/
-        sellersAuctionList.add(auctionForRegistration);
+        updatedSellerAuctionList.add(auctionForRegistration);
         seller.setSellersAuctions(sellersAuctionList);
 
 
@@ -89,15 +93,17 @@ public class AuctionService {
             User userWhoIsAlsoSellerPure = userWhoIsAlsoSeller.get();
             seller.setUser(userWhoIsAlsoSellerPure);
             userWhoIsAlsoSellerPure.setSeller(seller);
+            userRepository.save(userWhoIsAlsoSellerPure);
         }
         /* save seller to database! */
-        sellerRepository.save(seller);
+        //sellerRepository.save(seller);
 
         /* we set the seller of this auction! */
         auctionForRegistration.setSeller(seller);
 
         /* save the complete auction to the dataBase! */
-        return auctionRepository.save(auctionForRegistration);
+
+        return new ResponseEntity<>(auctionRepository.save(auctionForRegistration), HttpStatus.CREATED);
     }
 
     public List<Auction> getAllActiveAuctions(){
@@ -170,5 +176,21 @@ public class AuctionService {
         response.put("totalItems", pageWithResults.getTotalElements());
         response.put("totalPages", pageWithResults.getTotalPages());
         return response;
+    }
+
+    public ResponseEntity<?> deleteAll(){
+        auctionRepository.deleteAll();
+        return new ResponseEntity<>("ALL AUCTIONS ARE DELETED", HttpStatus.OK);
+    }
+    public  ResponseEntity<?> findSeller(Long auctionId){
+        Optional<Auction> optionalAuction = auctionRepository.findById(auctionId);
+        if (optionalAuction.isPresent()){
+            Auction originalAuction = optionalAuction.get();
+            System.out.println(originalAuction.getSeller().toString());
+            Seller auctionSeller = originalAuction.getSeller();
+            System.out.println(auctionSeller.getUser().toString());
+            return new ResponseEntity<>("Seller was found", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Seller was not found", HttpStatus.OK);
     }
 }
