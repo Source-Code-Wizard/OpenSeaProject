@@ -40,6 +40,13 @@ public class AuctionService {
         this.messageService = messageService;
     }
 
+    public  ResponseEntity<?> getSpecificAuction(Long auctionId){
+       Optional<Auction> optionalAuction= auctionRepository.findById(auctionId);
+       if (optionalAuction.isPresent()){
+           return new ResponseEntity<>(optionalAuction.get(), HttpStatus.OK);
+       }
+        return new ResponseEntity<>("No auction available", HttpStatus.BAD_REQUEST);
+    }
     public Auction registerAuctionToBase(AuctionDTO auctionDTO) {
 
         /* we retrive the information from the token payload and then register to base! */
@@ -56,7 +63,7 @@ public class AuctionService {
             String categoryName = categories.get(categoryIndex);
             Category category = categoryRepository.findByName(categoryName);
             categorySet.add(category);
-            System.out.println("Print message: "+category.toString());
+//            System.out.println("Print message: "+category.toString());
         }
 
         auctionForRegistration.setCategories(categorySet);
@@ -109,11 +116,11 @@ public class AuctionService {
 
         AuctionSpecification auctionSpecification = new AuctionSpecification();
         List<Auction> Auctions = new ArrayList<Auction>();
-        System.out.println("CATEGOTY IS "+categoryName);
+        System.out.println("CATEGORY IS "+categoryName);
         /* we search based on the parameteres the user gave as input */
         if (categoryName!=null){
             System.out.println(categoryName);
-           auctionSpecification.add(new SearchCriteria("categories",categoryName,SearchOperation.JOIN));
+            auctionSpecification.add(new SearchCriteria("categories",categoryName,SearchOperation.JOIN));
         }
         if (price!=null){
             auctionSpecification.add(new SearchCriteria("currently",price,SearchOperation.LESS_THAN));
@@ -130,14 +137,24 @@ public class AuctionService {
 
         /* As a response, the server sends a map that contains the following attributes! */
         Map<String, Object> response = new HashMap<>();
-        response.put("tutorials", Auctions);
+        response.put("Auctions", Auctions);
         response.put("currentPage", pageWithResults.getNumber());
         response.put("totalItems", pageWithResults.getTotalElements());
         response.put("totalPages", pageWithResults.getTotalPages());
         return response;
     }
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+
+    public ResponseEntity<?> getSellerId(Long auctionId){
+        Optional<Auction> auction = auctionRepository.findById(auctionId);
+        if(auction.isPresent()){
+            Auction auction1 = auction.get();
+            System.out.println(auction1.getSeller().getId());
+            return new ResponseEntity<>("ok.", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Auction not found", HttpStatus.BAD_REQUEST);
+    }
+//    @Autowired
+//    private SimpMessagingTemplate simpMessagingTemplate;
 
 //    public ResponseEntity<?> sellerSendsMessageAfterAuction(Auction auction, String message){
 //        Optional<Auction> existingAuction = auctionRepository.findById(auction.getItemId());
@@ -182,21 +199,25 @@ public class AuctionService {
 //                    Long sellerId = auctionRepository.getSellerId(auction.getItemId());
 //                    Optional<User> seller = userRepository.findById(sellerId);
                     Seller seller = auction.getSeller();
-                    if(true){
-                        System.out.print(seller.getRating());
 //                        return new ResponseEntity<>("Bidder doss mot exist!.", HttpStatus.BAD_REQUEST);
 
-                        String sellerName = seller.;
+                    Long sellerId = seller.getId();
+                    Optional<User> seller1 = userRepository.findById(sellerId);
+                    if(seller1.isPresent()){
+                        User validSeller = seller1.get();
+                        String sellerName = validSeller.getName();
+                        List<Bid> bids = auction.getBidList();
 
-//                        List<Bid> bids = auction.getBidList();
-//                        Optional<Bid> maxBid = bids.stream().max(Comparator.comparing(Bid::getMoneyAmount));
-//                        if(maxBid.isPresent()){
-//                            Bid bid = maxBid.get();
-//                            String bidderName = bid.getBidder().getUser().getName();
-//                            Message message1 = new Message(message, bidderName, sellerName);
+                        Optional<Bid> maxBid = bids.stream().max(Comparator.comparing(Bid::getMoneyAmount));
+                        if(maxBid.isPresent()){
+                            Bid bid = maxBid.get();
+                            String bidderName = bid.getBidder().getUser().getName();
+                            Message message1 = new Message(message, bidderName, sellerName);
+                            messageService.sendMessage(message1);
+                            return new ResponseEntity<>("Message was sent.", HttpStatus.OK);
 //                            simpMessagingTemplate.convertAndSendToUser(message1.getReceiver(),"/chat/message", message);
-//                        }
-//                        return new ResponseEntity<>("Bidder doss mot exist!.", HttpStatus.BAD_REQUEST);
+                        }
+                        return new ResponseEntity<>("Bidder does mot exist!.", HttpStatus.BAD_REQUEST);
                     }
                     return new ResponseEntity<>("Seller does not exist!", HttpStatus.BAD_REQUEST);
                 }

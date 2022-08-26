@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.time.LocalDateTime;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AuctionRepository extends JpaRepository<Auction,Long> , JpaSpecificationExecutor<Auction>, PagingAndSortingRepository<Auction, Long> {
@@ -21,4 +22,6 @@ public interface AuctionRepository extends JpaRepository<Auction,Long> , JpaSpec
 //    Long getSellerId(@Param("auction_id") Long auction_id);
 
     Page<Auction> findAll(Specification<Auction> sp, Pageable pageable);
+
+    Optional<Auction> findById(Long id);
 }

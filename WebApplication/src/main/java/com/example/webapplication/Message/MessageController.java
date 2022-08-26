@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,9 +22,8 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-//    @MessageMapping("/chat/{receiver}")
-//    public ResponseEntity<Message> sendMessage(Message message){
-//        return new ResponseEntity<>(messageService.sendMessage(message), HttpStatus.OK);
-//
-//    }
+    @MessageMapping("/message")
+    public ResponseEntity<Message> sendMessage(@Payload Message message){
+        return new ResponseEntity<>(messageService.sendMessage(message), HttpStatus.OK);
+    }
 }

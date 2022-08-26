@@ -26,7 +26,6 @@ public class AdminService {
     public List<User> getRegistrationRequests(){
         return adminRepository.showRegistrationRequests();
     }
-
     public ResponseEntity<?> authenticateUser(String userName){
         Optional<User> user= userRepository.findByUsername(userName);
         if (user.isPresent()){

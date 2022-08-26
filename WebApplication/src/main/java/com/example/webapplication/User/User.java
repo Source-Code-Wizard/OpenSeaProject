@@ -2,6 +2,7 @@ package com.example.webapplication.User;
 
 import com.example.webapplication.Message.Message;
 import com.example.webapplication.Role.Role;
+import com.example.webapplication.Seller.Seller;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -64,6 +65,10 @@ public class User  { //Composite primary keys require Serializible
     public void setOutbox(List<Message> outbox) {
         this.outbox = outbox;
     }
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private Seller seller;
 
     public User() {
     }

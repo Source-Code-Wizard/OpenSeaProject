@@ -1,7 +1,9 @@
 
 package com.example.webapplication.Seller;
 
+import com.example.webapplication.Bid.Bid;
 import com.example.webapplication.User.User;
+import com.example.webapplication.Auction.Auction;
 
 import com.example.webapplication.Auction.Auction;
 import javax.persistence.*;
@@ -14,19 +16,28 @@ import java.util.Objects;
 @Table(name="Sellers")
 public class Seller implements Serializable {
     private int rating;
-
-    @Id
+    /*@Id
     @OneToOne
     @JoinColumn(name = "SellerId", referencedColumnName = "userId")
+    private User user;*/
+
+    @Id
+    @Column(name = "user_id")
+    private Long id;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "user_id")
     private User user;
 
-    public Seller() {
-    }
 
-    @OneToMany( mappedBy = "seller", cascade = CascadeType.ALL, fetch = FetchType.EAGER )
+    @OneToMany(mappedBy = "seller" ,cascade = CascadeType.ALL, fetch = FetchType.EAGER )
     // we create to auction-table a new column named:Seller_ID which refers to Seller.sellerId column
     //@JoinColumn(name = "Seller_ID", referencedColumnName = "SellerId")
     private List<Auction> sellersAuctions = new ArrayList<>();
+
+    public Seller() {
+    }
 
     public Seller(int rating) {
         this.rating = rating;
@@ -60,5 +71,12 @@ public class Seller implements Serializable {
         return Objects.hash(getRating(), user);
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
 

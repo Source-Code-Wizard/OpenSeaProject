@@ -3,6 +3,7 @@ package com.example.webapplication.Message;
 import com.example.webapplication.Auction.AuctionRepository;
 import com.example.webapplication.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +21,10 @@ public class MessageService {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    public Message sendMessage(Message message) {
+    public Message sendMessage(@Payload Message message) {
         boolean exists = userRepository.existsByUsername(message.getReceiver());
         if(exists){
-            simpMessagingTemplate.convertAndSendToUser(message.getReceiver(),"/chat/message", message);
+            simpMessagingTemplate.convertAndSendToUser(message.getReceiver(),"/private", message);
             return message;
         }
         return null;

@@ -61,6 +61,10 @@ public class Auction {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime auctionEndTime;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id" /*nullable = false*/)
+    private Seller seller;
+
     @Column(name="description",columnDefinition="LONGTEXT",length = 65555)
     private String description;
 
@@ -74,10 +78,6 @@ public class Auction {
 
     @ManyToMany(fetch = FetchType.EAGER,targetEntity = Category.class)
     private Set<Category> categories = new HashSet<>();
-
-    @ManyToOne
-    @JoinColumn(name = "seller_id", nullable = false)
-    private Seller seller;
 
     public Seller getSeller() {
         return seller;
