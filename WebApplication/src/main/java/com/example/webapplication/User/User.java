@@ -1,7 +1,9 @@
 package com.example.webapplication.User;
 
+import com.example.webapplication.Bidder.Bidder;
 import com.example.webapplication.Role.Role;
 import com.example.webapplication.Seller.Seller;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,9 +47,16 @@ public class User  { //Composite primary keys require Serializible
     @Column(nullable = true)
     private boolean isRegistered;
 
+    /* One to One ( user-seller ) relationship */
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Seller seller;
+
+    /* One to One ( user-bidder ) relationship */
+    /*@OneToOne(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
+    @PrimaryKeyJoinColumn
+    @JsonIgnore
+    private Bidder bidder;*/
 
 
     public User() {
