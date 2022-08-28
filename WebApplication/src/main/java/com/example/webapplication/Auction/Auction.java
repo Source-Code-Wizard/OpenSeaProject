@@ -4,7 +4,9 @@ import com.example.webapplication.Bid.Bid;
 import com.example.webapplication.Category.Category;
 import com.example.webapplication.Seller.Seller;
 import com.example.webapplication.User.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -62,7 +64,9 @@ public class Auction {
     private LocalDateTime auctionEndTime;
 
     @ManyToOne
+    //@JsonIgnore
     @JoinColumn(name = "user_id" /*nullable = false*/)
+    @JsonBackReference
     private Seller seller;
 
     @Column(name="description",columnDefinition="LONGTEXT",length = 65555)
