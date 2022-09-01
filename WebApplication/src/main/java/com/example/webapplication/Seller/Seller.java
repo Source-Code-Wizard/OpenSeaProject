@@ -10,6 +10,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,16 +22,16 @@ import java.util.Objects;
 @Getter
 @Setter
 @Table(name="Sellers")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Seller implements Serializable {
     private int rating;
-    /*@Id
-    @OneToOne
-    @JoinColumn(name = "SellerId", referencedColumnName = "userId")
-    private User user;*/
 
     @Id
     @Column(name = "user_id")
+    @XmlTransient
     private Long id;
+
+    private String username;
 
     @OneToOne
     @MapsId
@@ -40,7 +43,8 @@ public class Seller implements Serializable {
     @OneToMany(mappedBy = "seller" ,cascade = CascadeType.ALL, fetch = FetchType.EAGER )
     // we create to auction-table a new column named:Seller_ID which refers to Seller.sellerId column
     //@JoinColumn(name = "Seller_ID", referencedColumnName = "SellerId")
-    @JsonManagedReference
+    //@JsonManagedReference
+    @JsonIgnore
     private List<Auction> sellersAuctions = new ArrayList<>();
 
     public Seller() {
@@ -58,7 +62,6 @@ public class Seller implements Serializable {
                 ", id=" + id +
                 '}';
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -24,6 +24,7 @@ public class AuctionController {
     }
 
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SELLER')")
     @PostMapping()
     public ResponseEntity<?> registerAuctionToBase(@RequestBody AuctionDTO auctionForRegistration) {
         return new ResponseEntity<>(auctionService.registerAuctionToBase(auctionForRegistration), HttpStatus.CREATED);
@@ -34,6 +35,7 @@ public class AuctionController {
         return auctionService.getAllActiveAuctions();
     }
 
+    /* FUNCTION FOR TESTING */
     @GetMapping("/findSeller/{auctionId}")
     public ResponseEntity<?> findSeller(@PathVariable("auctionId") String auctionId){
         return auctionService.findSeller(Long.parseLong(auctionId));

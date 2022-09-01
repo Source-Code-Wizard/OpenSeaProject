@@ -1,6 +1,7 @@
 package com.example.webapplication.Auction;
 
 import com.example.webapplication.Bid.Bid;
+import com.example.webapplication.Bid.BidSortByMoney;
 import com.example.webapplication.Bid.bidDTO;
 import com.example.webapplication.Bid.BidRepository;
 import com.example.webapplication.Bidder.Bidder;
@@ -18,9 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.*;
+import java.lang.*;
+import java.time.LocalDateTime;
+
 
 @Service
 public class AuctionService {
@@ -68,7 +70,7 @@ public class AuctionService {
             if (optionalBidder.isPresent()){
                 newBidder = optionalBidder.get();
             }else{
-                newBidder = new Bidder(0,officialUser.getUserId(),officialUser.getCountry(),officialUser.getAddress());
+                newBidder = new Bidder(0,officialUser.getUserId(),officialUser.getAddress(),officialUser.getCountry());
                 //officialUser.setBidder(newBidder);
                 bidderRepository.save(newBidder);
             }
@@ -79,13 +81,11 @@ public class AuctionService {
             Optional<Bid> optionalBid = bidRepository.myFind(optionalAuction.get().getItemId(), newBidder.getId());
             Bid newBid;
             if (optionalBid.isPresent()){
-                System.out.println("81");
                 newBid=optionalBid.get();
-                System.out.println(newBid.getBid_id());
                 newBid.setLocalBidDateTime(bidDTO.getBidSubmittedTime());
                 newBid.setMoneyAmount(bidDTO.getMoneyOffered());
-            }else newBid = new Bid(bidDTO.getBidSubmittedTime(),officialUser.getAddress(),
-                    officialUser.getCountry(), bidDTO.getMoneyOffered(),optionalAuction.get().getItemId());
+                newBid.setBidderUsername(officialUser.getUsername());
+            }else newBid = new Bid(bidDTO.getBidSubmittedTime(),bidDTO.getMoneyOffered(),officialUser.getUsername());
 
             System.out.println("85");
             newBidder.getBidsList().add(newBid);
@@ -106,6 +106,7 @@ public class AuctionService {
                 if (auctionPure.getBidList().isEmpty())
                 {
                     updatedAuctionBidList.add(newBid);
+                    auctionPure.setFirstBid(newBid.getMoneyAmount());
                     System.out.println("the list was emplty");
                 }
                 else {
@@ -119,9 +120,18 @@ public class AuctionService {
                             updatedAuctionBidList.add(oldBid);
                         }
                     }
+                    updatedAuctionBidList.add(newBid);
                 }
-                updatedAuctionBidList.add(newBid);
+
+
                 auctionPure.setBidList(updatedAuctionBidList);
+
+                Collections.sort(updatedAuctionBidList);
+                for (int i = 0; i <updatedAuctionBidList.size() ; i++) {
+                    System.out.println(updatedAuctionBidList.get(i).getMoneyAmount());
+                }
+                auctionPure.setCurrently(updatedAuctionBidList.get(0).getMoneyAmount());
+                auctionPure.setNumOfBids(updatedAuctionBidList.size());
 
                 //auctionPure.getBidList().add(newBid);
                 //auctionPure.setBidList(auctionPure.getBidList());
@@ -187,6 +197,7 @@ public class AuctionService {
         if (userWhoIsAlsoSeller.isPresent()){
             User userWhoIsAlsoSellerPure = userWhoIsAlsoSeller.get();
             seller.setUser(userWhoIsAlsoSellerPure);
+            seller.setUsername(userWhoIsAlsoSellerPure.getUsername());
             userWhoIsAlsoSellerPure.setSeller(seller);
             userRepository.save(userWhoIsAlsoSellerPure);
         }
