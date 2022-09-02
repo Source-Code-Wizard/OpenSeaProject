@@ -54,11 +54,11 @@ public class AuctionController {
     @GetMapping("/search")
     @CrossOrigin(origins = "https://localhost:3000",allowCredentials = "true")
     public Map<String, Object> searchForAuctions(@RequestParam(required = false)String category,
-                                                 @RequestParam(required = false)Double price,
+                                                 @RequestParam(required = false)Double currently,
                                                  @RequestParam(required = false)String location,
                                                  @RequestParam(required = false)String description)
     {
-        return auctionService.searchForAuction(category,price,location,description);
+        return auctionService.searchForAuction(category,currently,location,description);
     }
 
 

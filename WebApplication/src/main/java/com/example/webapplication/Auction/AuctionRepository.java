@@ -18,4 +18,6 @@ public interface AuctionRepository extends JpaRepository<Auction,Long> , JpaSpec
     List<Auction> findAllWithAuctionEndTimeAfter(@Param("now") LocalDateTime now);
 
     Page<Auction> findAll(Specification<Auction> sp, Pageable pageable);
+
+
 }

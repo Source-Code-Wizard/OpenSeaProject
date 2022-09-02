@@ -62,7 +62,10 @@ public class AuctionService {
         Optional<User> potenialUser = userRepository.findByUsername(userName);
         User officialUser;
         if (potenialUser.isPresent()){
-            System.out.println("63");
+            Optional<Auction> optionalAuction = auctionRepository.findById(bidDTO.getAuctionId());
+            if (optionalAuction.get().getCurrently()>=bidDTO.getMoneyOffered()){
+                return new ResponseEntity<>("Offer can not be that low!", HttpStatus.BAD_REQUEST);
+            }
             officialUser=potenialUser.get();
 
             Optional<Bidder> optionalBidder = bidderRepository.findById(officialUser.getUserId());
@@ -75,7 +78,7 @@ public class AuctionService {
                 bidderRepository.save(newBidder);
             }
 
-            Optional<Auction> optionalAuction = auctionRepository.findById(bidDTO.getAuctionId());
+
             System.out.println(optionalAuction.get().getItemId());
 
             Optional<Bid> optionalBid = bidRepository.myFind(optionalAuction.get().getItemId(), newBidder.getId());
@@ -252,7 +255,7 @@ public class AuctionService {
 
     public Map<String, Object>searchForAuction(String categoryName, Double price, String auctionLocation,String description){
 
-        Pageable pageable = PageRequest.of(0, 5);
+        Pageable pageable = PageRequest.of(0, 20);
 
         AuctionSpecification auctionSpecification = new AuctionSpecification();
         List<Auction> Auctions = new ArrayList<Auction>();
@@ -263,7 +266,7 @@ public class AuctionService {
             auctionSpecification.add(new SearchCriteria("categories",categoryName,SearchOperation.JOIN));
         }
         if (price!=null){
-            auctionSpecification.add(new SearchCriteria("currently",price,SearchOperation.LESS_THAN));
+            auctionSpecification.add(new SearchCriteria("Currently",price,SearchOperation.LESS_THAN));
         }
         if(auctionLocation!=null){
             auctionSpecification.add(new SearchCriteria("location",auctionLocation,SearchOperation.MATCH));
@@ -271,15 +274,24 @@ public class AuctionService {
         if(description!=null){
             auctionSpecification.add(new SearchCriteria("description",description,SearchOperation.MATCH));
         }
+
+
+
         Page<Auction> pageWithResults = auctionRepository.findAll(auctionSpecification,pageable);
-        /* getContent() returns ONLY a list with the pages we need */
-        Auctions = pageWithResults.getContent();
+
+        /* we return the auctions that havent expired yet*/
+        LocalDateTime now = LocalDateTime.now();
+        for (int i = 0; i <pageWithResults.getContent().size(); i++) {
+            boolean isActive = now.isBefore(pageWithResults.getContent().get(i).getAuctionEndTime());
+            if (isActive)
+                Auctions.add(pageWithResults.getContent().get(i));
+        }
 
         /* As a response, the server sends a map that contains the following attributes! */
         Map<String, Object> response = new HashMap<>();
         response.put("Auctions", Auctions);
         response.put("currentPage", pageWithResults.getNumber());
-        response.put("totalItems", pageWithResults.getTotalElements());
+        response.put("totalItems", Auctions.size());
         response.put("totalPages", pageWithResults.getTotalPages());
         return response;
     }

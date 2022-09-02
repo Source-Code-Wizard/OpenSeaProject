@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Auction>
+    <itemId>21</itemId>
+    <name>Play2</name>
+    <Currently>0.0</Currently>
+    <buyPrice>600.0</buyPrice>
+    <firstBid>0.0</firstBid>
+    <numOfBids>0</numOfBids>
+    <location>California</location>
+    <auctionStartedTime/>
+    <auctionEndTime/>
+    <seller>
+        <rating>0</rating>
+        <username>alex2001</username>
+    </seller>
+    <description>brand new beautiful handmade european blown glass ornament from christopher radko. this particular ornament features a snowman paired with a little girl bundled up in here pale blue coat sledding along on a silver and blue sled filled with packages. the ornament is approximately 5_ tall and 4_ wide. brand new and never displayed</description>
+    <Bids/>
+    <Categories>
+        <Category>
+            <name>Gaming</name>
+        </Category>
+    </Categories>
+</Auction>
