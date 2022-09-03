@@ -1,12 +1,17 @@
 package com.example.webapplication.Category;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name ="categories")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @XmlTransient
     private Long categoryId;
     private String name;
 

@@ -1,6 +1,7 @@
 package com.example.webapplication.Auction;
 
 import com.example.webapplication.Bid.Bid;
+import com.example.webapplication.Bid.BidSortByMoney;
 import com.example.webapplication.Bid.bidDTO;
 import com.example.webapplication.Bid.BidRepository;
 import com.example.webapplication.Bidder.Bidder;
@@ -22,6 +23,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.lang.*;
+import java.time.LocalDateTime;
+
 
 @Service
 public class AuctionService {
@@ -64,7 +68,10 @@ public class AuctionService {
         Optional<User> potenialUser = userRepository.findByUsername(userName);
         User officialUser;
         if (potenialUser.isPresent()){
-            System.out.println("63");
+            Optional<Auction> optionalAuction = auctionRepository.findById(bidDTO.getAuctionId());
+            if (optionalAuction.get().getCurrently()>=bidDTO.getMoneyOffered()){
+                return new ResponseEntity<>("Offer can not be that low!", HttpStatus.BAD_REQUEST);
+            }
             officialUser=potenialUser.get();
 
             Optional<Bidder> optionalBidder = bidderRepository.findById(officialUser.getUserId());
@@ -72,24 +79,22 @@ public class AuctionService {
             if (optionalBidder.isPresent()){
                 newBidder = optionalBidder.get();
             }else{
-                newBidder = new Bidder(0,officialUser.getUserId(),officialUser.getCountry(),officialUser.getAddress());
+                newBidder = new Bidder(0,officialUser.getUserId(),officialUser.getAddress(),officialUser.getCountry());
                 //officialUser.setBidder(newBidder);
                 bidderRepository.save(newBidder);
             }
 
-            Optional<Auction> optionalAuction = auctionRepository.findById(bidDTO.getAuctionId());
+
             System.out.println(optionalAuction.get().getItemId());
 
             Optional<Bid> optionalBid = bidRepository.myFind(optionalAuction.get().getItemId(), newBidder.getId());
             Bid newBid;
             if (optionalBid.isPresent()){
-                System.out.println("81");
                 newBid=optionalBid.get();
-                System.out.println(newBid.getBid_id());
                 newBid.setLocalBidDateTime(bidDTO.getBidSubmittedTime());
                 newBid.setMoneyAmount(bidDTO.getMoneyOffered());
-            }else newBid = new Bid(bidDTO.getBidSubmittedTime(),officialUser.getAddress(),
-                    officialUser.getCountry(), bidDTO.getMoneyOffered(),optionalAuction.get().getItemId());
+                newBid.setBidderUsername(officialUser.getUsername());
+            }else newBid = new Bid(bidDTO.getBidSubmittedTime(),bidDTO.getMoneyOffered(),officialUser.getUsername());
 
             System.out.println("85");
             newBidder.getBidsList().add(newBid);
@@ -110,6 +115,7 @@ public class AuctionService {
                 if (auctionPure.getBidList().isEmpty())
                 {
                     updatedAuctionBidList.add(newBid);
+                    auctionPure.setFirstBid(newBid.getMoneyAmount());
                     System.out.println("the list was emplty");
                 }
                 else {
@@ -123,9 +129,18 @@ public class AuctionService {
                             updatedAuctionBidList.add(oldBid);
                         }
                     }
+                    updatedAuctionBidList.add(newBid);
                 }
-                updatedAuctionBidList.add(newBid);
+
+
                 auctionPure.setBidList(updatedAuctionBidList);
+
+                Collections.sort(updatedAuctionBidList);
+                for (int i = 0; i <updatedAuctionBidList.size() ; i++) {
+                    System.out.println(updatedAuctionBidList.get(i).getMoneyAmount());
+                }
+                auctionPure.setCurrently(updatedAuctionBidList.get(0).getMoneyAmount());
+                auctionPure.setNumOfBids(updatedAuctionBidList.size());
 
                 //auctionPure.getBidList().add(newBid);
                 //auctionPure.setBidList(auctionPure.getBidList());
@@ -191,6 +206,7 @@ public class AuctionService {
         if (userWhoIsAlsoSeller.isPresent()){
             User userWhoIsAlsoSellerPure = userWhoIsAlsoSeller.get();
             seller.setUser(userWhoIsAlsoSellerPure);
+            seller.setUsername(userWhoIsAlsoSellerPure.getUsername());
             userWhoIsAlsoSellerPure.setSeller(seller);
             userRepository.save(userWhoIsAlsoSellerPure);
         }
@@ -245,7 +261,7 @@ public class AuctionService {
 
     public Map<String, Object>searchForAuction(String categoryName, Double price, String auctionLocation,String description){
 
-        Pageable pageable = PageRequest.of(0, 5);
+        Pageable pageable = PageRequest.of(0, 20);
 
         AuctionSpecification auctionSpecification = new AuctionSpecification();
         List<Auction> Auctions = new ArrayList<Auction>();
@@ -256,7 +272,7 @@ public class AuctionService {
             auctionSpecification.add(new SearchCriteria("categories",categoryName,SearchOperation.JOIN));
         }
         if (price!=null){
-            auctionSpecification.add(new SearchCriteria("currently",price,SearchOperation.LESS_THAN));
+            auctionSpecification.add(new SearchCriteria("Currently",price,SearchOperation.LESS_THAN));
         }
         if(auctionLocation!=null){
             auctionSpecification.add(new SearchCriteria("location",auctionLocation,SearchOperation.MATCH));
@@ -264,15 +280,24 @@ public class AuctionService {
         if(description!=null){
             auctionSpecification.add(new SearchCriteria("description",description,SearchOperation.MATCH));
         }
+
+
+
         Page<Auction> pageWithResults = auctionRepository.findAll(auctionSpecification,pageable);
-        /* getContent() returns ONLY a list with the pages we need */
-        Auctions = pageWithResults.getContent();
+
+        /* we return the auctions that havent expired yet*/
+        LocalDateTime now = LocalDateTime.now();
+        for (int i = 0; i <pageWithResults.getContent().size(); i++) {
+            boolean isActive = now.isBefore(pageWithResults.getContent().get(i).getAuctionEndTime());
+            if (isActive)
+                Auctions.add(pageWithResults.getContent().get(i));
+        }
 
         /* As a response, the server sends a map that contains the following attributes! */
         Map<String, Object> response = new HashMap<>();
         response.put("Auctions", Auctions);
         response.put("currentPage", pageWithResults.getNumber());
-        response.put("totalItems", pageWithResults.getTotalElements());
+        response.put("totalItems", Auctions.size());
         response.put("totalPages", pageWithResults.getTotalPages());
         return response;
     }

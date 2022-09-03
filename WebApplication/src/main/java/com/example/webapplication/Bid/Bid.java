@@ -26,11 +26,15 @@ import java.util.Objects;
 @Getter
 @EqualsAndHashCode
 @ToString
-public class Bid implements Serializable {
+public class Bid implements Serializable,Comparable<Bid> {
    /* @Id
     @OneToOne
     @JoinColumn(name = "BidderUserId", referencedColumnName = "user_id")
     private Bidder bidder;*/
+   @Override
+   public int compareTo(Bid d) {
+       return (int) (d.getMoneyAmount()-this.getMoneyAmount());
+   }
     @Id
     @SequenceGenerator(
            name= "user_sequence", sequenceName = "user_sequence",allocationSize = 1
@@ -46,16 +50,16 @@ public class Bid implements Serializable {
     @MapsId
     @JsonIgnore
     @JoinColumn(name = "user_id")*/
-    @JsonIgnore
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "bidder_id", referencedColumnName = "bidder_id")
     private Bidder bidder;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime localBidDateTime;
-    private String BidderAddress;
-    private String BidderCountry;
-    private Integer moneyAmount;
+
+    private Double moneyAmount;
+    private String bidderUsername;
 
     @ManyToOne
     @JsonIgnore
@@ -65,25 +69,23 @@ public class Bid implements Serializable {
     public Bid() {
     }
 
-    public Bid(LocalDateTime localBidDateTime, String bidderAddress, String bidderCountry, Integer moneyAmount,Long itemId) {
-        //this.bidder = bidder;
+    public Bid(LocalDateTime localBidDateTime,  double moneyAmount,String bidderUsername) {
         this.localBidDateTime = localBidDateTime;
-        BidderAddress = bidderAddress;
-        BidderCountry = bidderCountry;
         this.moneyAmount = moneyAmount;
+        this.bidderUsername = bidderUsername;
     }
-
-    public void setBidderAddress(String bidderAddress) {
-        BidderAddress = bidderAddress;
-    }
-
-    public String getBidderCountry() {
-        return BidderCountry;
-    }
-
-    public void setBidderCountry(String bidderCountry) {
-        BidderCountry = bidderCountry;
-    }
+//
+//    public void setBidderAddress(String bidderAddress) {
+//        BidderAddress = bidderAddress;
+//    }
+//
+//    public String getBidderCountry() {
+//        return BidderCountry;
+//    }
+//
+//    public void setBidderCountry(String bidderCountry) {
+//        BidderCountry = bidderCountry;
+//    }
 
     public LocalDateTime getLocalBidDateTime() {
         return localBidDateTime;
@@ -93,7 +95,7 @@ public class Bid implements Serializable {
         this.localBidDateTime = localBidDateTime;
     }
 
-    public Integer getMoneyAmount() {
+    public Double getMoneyAmount() {
         return moneyAmount;
     }
 
@@ -101,7 +103,7 @@ public class Bid implements Serializable {
         return bidder;
     }
 
-    public void setMoneyAmount(Integer moneyAmount) {
+    public void setMoneyAmount(Double moneyAmount) {
         this.moneyAmount = moneyAmount;
     }
 

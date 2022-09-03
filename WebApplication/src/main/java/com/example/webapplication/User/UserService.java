@@ -70,8 +70,9 @@ public class UserService {
 
     public ResponseEntity<?> login(String userName,String userPassword) {
         try {
+            System.out.println(userName);
             Optional<User> user= userRepository.findByUsername(userName);
-            if (!user.isPresent())
+            if (!(user.isPresent()))
                 return new ResponseEntity<>("There is no such user", HttpStatus.BAD_REQUEST);
             if(!user.get().isRegistered())
                 return new ResponseEntity<>("Administrator has to accept this user first...", HttpStatus.BAD_REQUEST);

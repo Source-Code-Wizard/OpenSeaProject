@@ -25,6 +25,8 @@ public class AuctionController {
         this.auctionService = auctionService;
     }
 
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SELLER')")
     @PostMapping()
     public ResponseEntity<?> registerAuctionToBase(@RequestBody AuctionDTO auctionForRegistration) {
         return new ResponseEntity<>(auctionService.registerAuctionToBase(auctionForRegistration), HttpStatus.CREATED);
@@ -35,6 +37,7 @@ public class AuctionController {
         return auctionService.getAllActiveAuctions();
     }
 
+    /* FUNCTION FOR TESTING */
     @GetMapping("/findSeller/{auctionId}")
     public ResponseEntity<?> findSeller(@PathVariable("auctionId") String auctionId){
         return auctionService.findSeller(Long.parseLong(auctionId));
@@ -53,11 +56,11 @@ public class AuctionController {
     @GetMapping("/search")
     @CrossOrigin(origins = "https://localhost:3000",allowCredentials = "true")
     public Map<String, Object> searchForAuctions(@RequestParam(required = false)String category,
-                                                 @RequestParam(required = false)Double price,
+                                                 @RequestParam(required = false)Double currently,
                                                  @RequestParam(required = false)String location,
                                                  @RequestParam(required = false)String description)
     {
-        return auctionService.searchForAuction(category,price,location,description);
+        return auctionService.searchForAuction(category,currently,location,description);
     }
 
 

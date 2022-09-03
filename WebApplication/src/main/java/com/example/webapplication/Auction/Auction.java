@@ -17,6 +17,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,6 +30,8 @@ import java.util.Set;
 @Setter
 @ToString
 @Table(name = "Auction")
+@XmlRootElement(name = "Auction")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Auction {
     @Id
     @SequenceGenerator(
@@ -66,7 +69,7 @@ public class Auction {
     @ManyToOne
     //@JsonIgnore
     @JoinColumn(name = "user_id" /*nullable = false*/)
-    @JsonBackReference
+    //@JsonBackReference
     private Seller seller;
 
     @Column(name="description",columnDefinition="LONGTEXT",length = 65555)
@@ -75,12 +78,16 @@ public class Auction {
     // one to many unidirectional mapping
     // default fetch type for OneToMany: LAZY
     @ToString.Exclude
+    @XmlElementWrapper(name="Bids")
+    @XmlElement(name="Bid")
     @OneToMany( mappedBy = "auction" ,cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     // we create to Bid-table a new column named:Auction_itemID which refers to Auction.itemId column
    // @JoinColumn(name = "Auction_itemID", referencedColumnName = "itemId")
     private List<Bid> bidList = new ArrayList<>();
 
 
+    @XmlElementWrapper(name="Categories")
+    @XmlElement(name="Category")
     @ManyToMany(fetch = FetchType.EAGER,targetEntity = Category.class)
     private Set<Category> categories = new HashSet<>();
 

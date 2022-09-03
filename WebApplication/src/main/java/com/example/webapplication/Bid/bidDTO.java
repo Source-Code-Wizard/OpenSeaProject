@@ -25,13 +25,14 @@ public class bidDTO {
     private LocalDateTime bidSubmittedTime;
     private Long auctionId;
 
-    private int moneyOffered;
+    private double moneyOffered;
 
     public bidDTO() {}
 
-    public bidDTO(String username, LocalDateTime bidSubmittedTime, Long auctionId) {
+    public bidDTO(String username, LocalDateTime bidSubmittedTime, Long auctionId,double moneyOffered) {
         this.username = username;
         this.bidSubmittedTime = bidSubmittedTime;
         this.auctionId = auctionId;
+        this.moneyOffered=moneyOffered;
     }
 }

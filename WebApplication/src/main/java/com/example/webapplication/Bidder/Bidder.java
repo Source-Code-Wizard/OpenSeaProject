@@ -41,12 +41,11 @@ public class Bidder implements Serializable {
     @OneToMany(mappedBy = "bidder" ,cascade = CascadeType.ALL, fetch = FetchType.EAGER )
     // we create to auction-table a new column named:Seller_ID which refers to Seller.sellerId column
     //@JoinColumn(name = "Seller_ID", referencedColumnName = "SellerId")
-    @JsonManagedReference
+    //@JsonManagedReference
+    @JsonIgnore
     private List<Bid> bidsList = new ArrayList<>();
    /* @OneToOne(mappedBy = "bidder",cascade = CascadeType.ALL)
     private Bid bid;*/
-
-
 
     private String BidderAddress;
 
