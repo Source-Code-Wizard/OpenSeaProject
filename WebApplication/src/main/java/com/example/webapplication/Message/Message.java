@@ -1,5 +1,7 @@
 package com.example.webapplication.Message;
 
+import com.example.webapplication.User.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,15 +19,23 @@ public class Message {
     private Long messageId;
     private String message;
 
-    private String sender;
+    @ManyToOne
+    //@JsonIgnore
+    @JoinColumn(name = "sender_id", referencedColumnName = "user_id"/*nullable = false*/)
+    @JsonBackReference
+    private User sender;
 
-    private String receiver;
+    @ManyToOne
+    //@JsonIgnore
+    @JoinColumn(name = "receiver_id",referencedColumnName = "user_id"/*nullable = false*/)
+    @JsonBackReference
+    private User receiver;
 
     public Message(){
 
     }
 
-    public Message(String message, String sender, String receiver){
+    public Message(String message, User sender, User receiver){
         this.message = message;
         this.sender = sender;
         this.receiver = receiver;
@@ -40,11 +50,19 @@ public class Message {
                 '}';
     }
 
-    public String getReceiver() {
+    public User getSender() {
+        return sender;
+    }
+
+    public void setSender(User sender) {
+        this.sender = sender;
+    }
+
+    public User getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(String receiver) {
+    public void setReceiver(User receiver) {
         this.receiver = receiver;
     }
 
@@ -56,12 +74,5 @@ public class Message {
         this.message = message;
     }
 
-    public String getSender() {
-        return sender;
-    }
-
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
 
 }

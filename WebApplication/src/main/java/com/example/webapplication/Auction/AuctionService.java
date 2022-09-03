@@ -1,6 +1,10 @@
 package com.example.webapplication.Auction;
 
 import com.example.webapplication.Bid.Bid;
+import com.example.webapplication.Bid.bidDTO;
+import com.example.webapplication.Bid.BidRepository;
+import com.example.webapplication.Bidder.Bidder;
+import com.example.webapplication.Bidder.BidderRepository;
 import com.example.webapplication.Category.Category;
 import com.example.webapplication.Category.CategoryRepository;
 import com.example.webapplication.Message.Message;
@@ -16,8 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -29,15 +31,22 @@ public class AuctionService {
     private final SellerRepository sellerRepository;
     private final MessageService messageService;
 
+    private final BidderRepository bidderRepository;
+
+    private final BidRepository bidRepository;
+
     @Autowired
 
-    public AuctionService(AuctionRepository auctionRepository,CategoryRepository categoryRepository,
-                          UserRepository userRepository,SellerRepository sellerRepository, MessageService messageService) {
+    public AuctionService(AuctionRepository auctionRepository, CategoryRepository categoryRepository,
+                          UserRepository userRepository, SellerRepository sellerRepository,
+                          BidderRepository bidderRepository, BidRepository bidRepository, MessageService messageService) {
         this.auctionRepository = auctionRepository;
         this.categoryRepository=categoryRepository;
         this.userRepository=userRepository;
         this.sellerRepository=sellerRepository;
         this.messageService = messageService;
+        this.bidRepository=bidRepository;
+        this.bidderRepository = bidderRepository;
     }
 
     public  ResponseEntity<?> getSpecificAuction(Long auctionId){
@@ -47,8 +56,92 @@ public class AuctionService {
        }
         return new ResponseEntity<>("No auction available", HttpStatus.BAD_REQUEST);
     }
-    public Auction registerAuctionToBase(AuctionDTO auctionDTO) {
 
+    public  ResponseEntity<?> placeBid(bidDTO bidDTO){
+
+        System.out.println(bidDTO.toString());
+        String userName = bidDTO.getUsername();
+        Optional<User> potenialUser = userRepository.findByUsername(userName);
+        User officialUser;
+        if (potenialUser.isPresent()){
+            System.out.println("63");
+            officialUser=potenialUser.get();
+
+            Optional<Bidder> optionalBidder = bidderRepository.findById(officialUser.getUserId());
+            Bidder newBidder;
+            if (optionalBidder.isPresent()){
+                newBidder = optionalBidder.get();
+            }else{
+                newBidder = new Bidder(0,officialUser.getUserId(),officialUser.getCountry(),officialUser.getAddress());
+                //officialUser.setBidder(newBidder);
+                bidderRepository.save(newBidder);
+            }
+
+            Optional<Auction> optionalAuction = auctionRepository.findById(bidDTO.getAuctionId());
+            System.out.println(optionalAuction.get().getItemId());
+
+            Optional<Bid> optionalBid = bidRepository.myFind(optionalAuction.get().getItemId(), newBidder.getId());
+            Bid newBid;
+            if (optionalBid.isPresent()){
+                System.out.println("81");
+                newBid=optionalBid.get();
+                System.out.println(newBid.getBid_id());
+                newBid.setLocalBidDateTime(bidDTO.getBidSubmittedTime());
+                newBid.setMoneyAmount(bidDTO.getMoneyOffered());
+            }else newBid = new Bid(bidDTO.getBidSubmittedTime(),officialUser.getAddress(),
+                    officialUser.getCountry(), bidDTO.getMoneyOffered(),optionalAuction.get().getItemId());
+
+            System.out.println("85");
+            newBidder.getBidsList().add(newBid);
+            //newBidder.setUser(officialUser);
+            newBid.setBidder(newBidder);
+
+            //officialUser.setBidder(newBidder);
+            userRepository.save(officialUser);
+
+
+            if (optionalAuction.isPresent()){
+                Auction auctionPure= optionalAuction.get();
+                System.out.println(auctionPure.toString());
+                //bidRepository.save(newBid);
+
+                /* we update the bids of the specific auction*/
+                List<Bid> updatedAuctionBidList=new ArrayList<>();
+                if (auctionPure.getBidList().isEmpty())
+                {
+                    updatedAuctionBidList.add(newBid);
+                    System.out.println("the list was emplty");
+                }
+                else {
+                    /* check if this specific biddder has already a bid and if so, update it*/
+                    for (int bid = 0; bid <auctionPure.getBidList().size() ; bid++) {
+                        Bid oldBid = auctionPure.getBidList().get(bid);
+                        if (oldBid.getBidder().getId()==newBid.getBidder().getId()){
+                            System.out.println("old bid is removed");
+                            continue;
+                        }else{
+                            updatedAuctionBidList.add(oldBid);
+                        }
+                    }
+                }
+                updatedAuctionBidList.add(newBid);
+                auctionPure.setBidList(updatedAuctionBidList);
+
+                //auctionPure.getBidList().add(newBid);
+                //auctionPure.setBidList(auctionPure.getBidList());
+
+                newBid.setAuction(auctionPure);
+               // bidRepository.save(newBid);
+
+                auctionRepository.save(auctionPure);
+                return new ResponseEntity<>("Pid was placed succesfully", HttpStatus.CREATED);
+            }
+        }
+
+        return new ResponseEntity<>("Pid cant be placed", HttpStatus.BAD_REQUEST);
+    }
+
+    public ResponseEntity<?> registerAuctionToBase(AuctionDTO auctionDTO) {
 
         System.out.println(auctionDTO.getSeller_id());
 
@@ -78,13 +171,18 @@ public class AuctionService {
             String categoryName = categories.get(categoryIndex);
             Category category = categoryRepository.findByName(categoryName);
             categorySet.add(category);
-            System.out.println("Print message: "+category.toString());
+            //System.out.println("Print message: "+category.toString());
         }
 
         auctionForRegistration.setCategories(categorySet);
 
+        List<Auction> updatedSellerAuctionList = new ArrayList<>();
+        for (int i = 0; i <sellersAuctionList.size() ; i++) {
+            updatedSellerAuctionList.add(sellersAuctionList.get(i));
+        }
+
         /* we update seller's list and we save seller to the database*/
-        sellersAuctionList.add(auctionForRegistration);
+        updatedSellerAuctionList.add(auctionForRegistration);
         seller.setSellersAuctions(sellersAuctionList);
 
 
@@ -94,15 +192,17 @@ public class AuctionService {
             User userWhoIsAlsoSellerPure = userWhoIsAlsoSeller.get();
             seller.setUser(userWhoIsAlsoSellerPure);
             userWhoIsAlsoSellerPure.setSeller(seller);
+            userRepository.save(userWhoIsAlsoSellerPure);
         }
         /* save seller to database! */
-        sellerRepository.save(seller);
+        //sellerRepository.save(seller);
 
         /* we set the seller of this auction! */
         auctionForRegistration.setSeller(seller);
 
         /* save the complete auction to the dataBase! */
-        return auctionRepository.save(auctionForRegistration);
+
+        return new ResponseEntity<>(auctionRepository.save(auctionForRegistration), HttpStatus.CREATED);
     }
 
     public List<Auction> getAllActiveAuctions(){
@@ -223,36 +323,59 @@ public class AuctionService {
 //        return new ResponseEntity<>("This auction doesn't exist!", HttpStatus.BAD_REQUEST);
 //    }
 
-    public ResponseEntity<?> bidderSendsMessageAfterAuction(Auction auction, String message){
+    public  ResponseEntity<?> findSeller(Long auctionId){
+        Optional<Auction> optionalAuction = auctionRepository.findById(auctionId);
+        if (optionalAuction.isPresent()){
+            Auction originalAuction = optionalAuction.get();
+            System.out.println(originalAuction.getSeller().toString());
+            Seller auctionSeller = originalAuction.getSeller();
+            System.out.println(auctionSeller.getUser().toString());
+            return new ResponseEntity<>("Seller was found", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Seller was not found", HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> sellerSendsMessageAfterAuction(Auction auction, String message) {
         Optional<Auction> existingAuction = auctionRepository.findById(auction.getItemId());
-        if(existingAuction.isPresent()){
+        if (existingAuction.isPresent()) {
             Auction newAuction = existingAuction.get();
-            if(newAuction.getAuctionEndTime().isBefore(LocalDateTime.now())){
-                if(auction.getNumOfBids() > 0){
+            if (newAuction.getAuctionEndTime().isBefore(LocalDateTime.now())) {
+                if (newAuction.getNumOfBids() > 0) {
 //                    Long sellerId = auctionRepository.getSellerId(auction.getItemId());
 //                    Optional<User> seller = userRepository.findById(sellerId);
-                    Seller seller = auction.getSeller();
+                    User seller = newAuction.getSeller().getUser();
+//                    Seller seller = findSeller(auction.getItemId());
 //                        return new ResponseEntity<>("Bidder doss mot exist!.", HttpStatus.BAD_REQUEST);
+//                    String sellerName = seller.getUser().getName();
+//                    Long sellerId = seller.getId();
+//                    Optional<User> seller1 = userRepository.findById(sellerId);
+//                    if (seller1.isPresent()) {
+//                        User validSeller = seller1.get();
+//                        String sellerName = validSeller.getName();
 
-                    Long sellerId = seller.getId();
-                    Optional<User> seller1 = userRepository.findById(sellerId);
-                    if(seller1.isPresent()){
-                        User validSeller = seller1.get();
-                        String sellerName = validSeller.getName();
-                        List<Bid> bids = auction.getBidList();
+                    List<Bid> bids = newAuction.getBidList();
+                    Optional<Bid> maxBid = bids.stream().max(Comparator.comparing(Bid::getMoneyAmount));
+                    if (maxBid.isPresent()) {
+                        Bid bid = maxBid.get();
+                        Long bidderId = bid.getBidder().getId();
+                        Optional<User> optionalBidder = userRepository.findById(bidderId);
+                        if(optionalBidder.isPresent()){
+                            User bidder = optionalBidder.get();
+                            messageService.sendMessage(message, seller.getUsername(), bidder.getUsername());
 
-                        Optional<Bid> maxBid = bids.stream().max(Comparator.comparing(Bid::getMoneyAmount));
-                        if(maxBid.isPresent()){
-                            Bid bid = maxBid.get();
-                            String bidderName = bid.getBidder().getUser().getName();
-                            Message message1 = new Message(message, bidderName, sellerName);
-                            messageService.sendMessage(message1);
+//                            List<Message> bidderInbox = bidder.getInbox();
+//                            bidderInbox.add(message1);
+//                            bidder.setInbox(bidderInbox);
+//
+//                            List<Message> sellerOutbox = seller.getUser().getOutbox();
+//                            sellerOutbox.add(message1);
+//                            seller.getUser().setOutbox(sellerOutbox);
                             return new ResponseEntity<>("Message was sent.", HttpStatus.OK);
-//                            simpMessagingTemplate.convertAndSendToUser(message1.getReceiver(),"/chat/message", message);
                         }
+//                  }
                         return new ResponseEntity<>("Bidder does mot exist!.", HttpStatus.BAD_REQUEST);
                     }
-                    return new ResponseEntity<>("Seller does not exist!", HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>("Bid does not exist!", HttpStatus.BAD_REQUEST);
                 }
                 return new ResponseEntity<>("This auction has no bids.", HttpStatus.BAD_REQUEST);
             }
@@ -260,4 +383,10 @@ public class AuctionService {
         }
         return new ResponseEntity<>("This auction doesn't exist!", HttpStatus.BAD_REQUEST);
     }
+
+    public ResponseEntity<?> deleteAll(){
+        auctionRepository.deleteAll();
+        return new ResponseEntity<>("ALL AUCTIONS ARE DELETED", HttpStatus.OK);
+    }
+
 }

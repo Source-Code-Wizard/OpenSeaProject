@@ -7,8 +7,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -22,8 +21,14 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    @MessageMapping("/message")
-    public ResponseEntity<Message> sendMessage(@Payload Message message){
-        return new ResponseEntity<>(messageService.sendMessage(message), HttpStatus.OK);
+    @PostMapping("/message")
+    public ResponseEntity<?> sendMessage(@RequestBody messageDTO message){
+        return new ResponseEntity<>(messageService.sendMessage(message.getMessage(), message.getSenderUsername(), message.getReceiverUsername()), HttpStatus.OK);
+    }
+
+    @GetMapping("/getMessage/{message_id}")
+    public ResponseEntity<?> getMessage(@PathVariable("message_id") Long id){
+        System.out.println(id);
+        return new ResponseEntity<>(messageService.getMessage((id)), HttpStatus.OK);
     }
 }

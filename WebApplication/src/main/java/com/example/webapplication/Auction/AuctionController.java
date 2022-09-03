@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auctions")
+@CrossOrigin(origins = "https://localhost:3000/OpensSea/Auctions",allowCredentials = "true")
 public class AuctionController {
     private final AuctionService auctionService;
 
@@ -24,9 +25,8 @@ public class AuctionController {
         this.auctionService = auctionService;
     }
 
-
-    @PostMapping("/register")
-    public ResponseEntity<Auction> registerAuctionToBase(@RequestBody AuctionDTO auctionForRegistration) {
+    @PostMapping()
+    public ResponseEntity<?> registerAuctionToBase(@RequestBody AuctionDTO auctionForRegistration) {
         return new ResponseEntity<>(auctionService.registerAuctionToBase(auctionForRegistration), HttpStatus.CREATED);
     }
 
@@ -35,10 +35,19 @@ public class AuctionController {
         return auctionService.getAllActiveAuctions();
     }
 
-    @CrossOrigin(origins = "https://localhost:3000/OpensSea/Auctions",allowCredentials = "true")
+    @GetMapping("/findSeller/{auctionId}")
+    public ResponseEntity<?> findSeller(@PathVariable("auctionId") String auctionId){
+        return auctionService.findSeller(Long.parseLong(auctionId));
+    }
+
     @GetMapping("/getAuction/{auctionId}")
     public ResponseEntity<?> getSpecificAuction(@PathVariable("auctionId") String auctionId){
         return auctionService.getSpecificAuction(Long.parseLong(auctionId));
+    }
+
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<?> deleteAuctions(){
+        return new ResponseEntity<>(auctionService.deleteAll(), HttpStatus.OK);
     }
 
     @GetMapping("/search")
@@ -68,12 +77,12 @@ public class AuctionController {
         return new ResponseEntity<>(auctionService.getSellerId(auctionId), HttpStatus.OK);
     }
 
-    @MessageMapping("/chatAfterAuction")
-//    public ResponseEntity<?> sellerSendsMessageAfterAuction(@RequestBody Auction auction, @RequestBody String message){
-//        return new ResponseEntity<>(auctionService.sellerSendsMessageAfterAuction(auction, message), HttpStatus.OK);
-//    }
-
-    public ResponseEntity<?> bidderSendsMessageAfterAuction(@RequestBody Auction auction, @RequestBody String message){
-        return new ResponseEntity<>(auctionService.bidderSendsMessageAfterAuction(auction, message), HttpStatus.OK);
+    @PostMapping("/chatAfterAuction")
+////    public ResponseEntity<?> sellerSendsMessageAfterAuction(@RequestBody Auction auction, @RequestBody String message){
+////        return new ResponseEntity<>(auctionService.sellerSendsMessageAfterAuction(auction, message), HttpStatus.OK);
+////    }
+//
+    public ResponseEntity<?> sellerSendsMessageAfterAuction(@RequestBody Auction auction, @RequestBody String message){
+        return new ResponseEntity<>(auctionService.sellerSendsMessageAfterAuction(auction, message), HttpStatus.OK);
     }
 }

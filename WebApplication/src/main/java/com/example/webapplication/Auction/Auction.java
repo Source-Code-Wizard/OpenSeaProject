@@ -74,9 +74,10 @@ public class Auction {
 
     // one to many unidirectional mapping
     // default fetch type for OneToMany: LAZY
-    @OneToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
+    @ToString.Exclude
+    @OneToMany( mappedBy = "auction" ,cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     // we create to Bid-table a new column named:Auction_itemID which refers to Auction.itemId column
-    @JoinColumn(name = "Auction_itemID", referencedColumnName = "itemId")
+   // @JoinColumn(name = "Auction_itemID", referencedColumnName = "itemId")
     private List<Bid> bidList = new ArrayList<>();
 
 

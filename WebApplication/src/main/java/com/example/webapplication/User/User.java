@@ -1,8 +1,11 @@
 package com.example.webapplication.User;
 
 import com.example.webapplication.Message.Message;
+import com.example.webapplication.Bidder.Bidder;
 import com.example.webapplication.Role.Role;
 import com.example.webapplication.Seller.Seller;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +31,7 @@ public class User  { //Composite primary keys require Serializible
             name= "user_sequence", sequenceName = "user_sequence",allocationSize = 1
     )
     @GeneratedValue( strategy = GenerationType.SEQUENCE,generator = "user_sequence")
+    @Column(name = "user_id")
     private Long userId;
     @Column(name="Username")
     private String username;
@@ -48,35 +52,30 @@ public class User  { //Composite primary keys require Serializible
     @Column(nullable = true)
     private boolean isRegistered;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY )
-    private List<Message> inbox = new ArrayList<>();
+    @OneToMany(/*targetEntity = Message.class,*/ mappedBy = "receiver", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private Set<Message> inbox = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY )
-    private List<Message> outbox = new ArrayList<>();
+    @OneToMany(/*targetEntity = Message.class,*/ mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private Set<Message> outbox = new HashSet<>();
 
-    public List<Message> getInbox() {
-        return inbox;
-    }
 
     public Long getUserId() {
         return userId;
     }
 
-    public void setInbox(List<Message> inbox) {
-        this.inbox = inbox;
-    }
-
-    public List<Message> getOutbox() {
-        return outbox;
-    }
-
-    public void setOutbox(List<Message> outbox) {
-        this.outbox = outbox;
-    }
-
+    /* One to One ( user-seller ) relationship */
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Seller seller;
+
+
+    /* One to One ( user-bidder ) relationship */
+    /*@OneToOne(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
+    @PrimaryKeyJoinColumn
+    @JsonIgnore
+    private Bidder bidder;*/
 
     public User() {
     }
