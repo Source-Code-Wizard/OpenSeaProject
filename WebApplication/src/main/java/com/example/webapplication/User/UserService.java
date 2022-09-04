@@ -77,7 +77,7 @@ public class UserService {
             if(!user.get().isRegistered())
                 return new ResponseEntity<>("Administrator has to accept this user first...", HttpStatus.BAD_REQUEST);
 
-            System.out.println(user.get().toString());
+//            System.out.println(user.get().toString());
             System.out.println(userName);
             System.out.println(userPassword);
 

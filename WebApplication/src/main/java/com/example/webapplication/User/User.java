@@ -53,11 +53,11 @@ public class User  { //Composite primary keys require Serializible
     private boolean isRegistered;
 
     @OneToMany(/*targetEntity = Message.class,*/ mappedBy = "receiver", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
+    @JsonManagedReference(value = "userReceiver")
     private Set<Message> inbox = new HashSet<>();
 
     @OneToMany(/*targetEntity = Message.class,*/ mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
+    @JsonManagedReference(value = "userSender")
     private Set<Message> outbox = new HashSet<>();
 
 

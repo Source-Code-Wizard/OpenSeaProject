@@ -22,13 +22,13 @@ public class Message {
     @ManyToOne
     //@JsonIgnore
     @JoinColumn(name = "sender_id", referencedColumnName = "user_id"/*nullable = false*/)
-    @JsonBackReference
+    @JsonBackReference(value = "userSender")
     private User sender;
 
     @ManyToOne
     //@JsonIgnore
     @JoinColumn(name = "receiver_id",referencedColumnName = "user_id"/*nullable = false*/)
-    @JsonBackReference
+    @JsonBackReference(value = "userReceiver")
     private User receiver;
 
     public Message(){
