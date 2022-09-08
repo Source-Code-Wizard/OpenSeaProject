@@ -20,28 +20,37 @@ public class AdminService {
     private final UserRepository userRepository;
 
     @Autowired
-    public AdminService(AdminRepository adminRepository,UserRepository userRepository) {
+    public AdminService(AdminRepository adminRepository, UserRepository userRepository) {
         this.adminRepository = adminRepository;
-        this.userRepository=userRepository;
+        this.userRepository = userRepository;
     }
 
-    public List<UserRequestDto> getRegistrationRequests(){
+    public List<UserRequestDto> getRegistrationRequests() {
         List<UserRequestDto> userRequestDtoList = new ArrayList<>();
-        List<User> userList= adminRepository.showRegistrationRequests();
+        List<User> userList = adminRepository.showRegistrationRequests();
         for (int i = 0; i < userList.size(); i++) {
             User UnregisteredUser = userList.get(i);
-            userRequestDtoList.add(new UserRequestDto(UnregisteredUser.getUsername(),UnregisteredUser.getEmail()));
+            userRequestDtoList.add(new UserRequestDto(UnregisteredUser.getUsername(), UnregisteredUser.getEmail()));
         }
         return userRequestDtoList;
     }
-    public ResponseEntity<?> authenticateUser(String userName){
-        Optional<User> user= userRepository.findByUsername(userName);
-        if (user.isPresent()){
+
+    public ResponseEntity<?> authenticateUser(String userName) {
+        Optional<User> user = userRepository.findByUsername(userName);
+        if (user.isPresent()) {
             User userForAuthentication = user.get();
             userForAuthentication.setRegistered(true);
             userRepository.save(userForAuthentication);
-            return new ResponseEntity<>("User "+userForAuthentication.getUsername()+" is now authenticated successfully", HttpStatus.OK);
+            return new ResponseEntity<>("User " + userForAuthentication.getUsername() + " is now authenticated successfully", HttpStatus.OK);
         }
         return new ResponseEntity<>("This user can not be authenticated", HttpStatus.BAD_REQUEST);
+    }
+
+    public ResponseEntity<?> returnFullUser(String userName) {
+        Optional<User> optionalUser = userRepository.findByUsername(userName);
+        if (optionalUser.isPresent()) {
+            return new ResponseEntity<>(optionalUser.get(), HttpStatus.FOUND);
+        } else
+            return new ResponseEntity<>("There is not such user", HttpStatus.BAD_REQUEST);
     }
 }

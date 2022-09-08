@@ -58,7 +58,14 @@ public class AdministratorController {
         return new ResponseEntity<>(adminService.authenticateUser(authUserDto.getUsername()), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/mapJsontoXML", consumes = MediaType.APPLICATION_JSON_VALUE /*produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}*/)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/getFullUser")
+    public ResponseEntity<?> getFullUser(@RequestBody AuthUserDto authUserDto){
+        System.out.println(authUserDto.getUsername());
+        return new ResponseEntity<>(adminService.returnFullUser(authUserDto.getUsername()), HttpStatus.OK);
+    }
+
+  /*  @GetMapping(path = "/mapJsontoXML", consumes = MediaType.APPLICATION_JSON_VALUE *//*produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}*//*)
     public ResponseEntity<Resource>  mapJsonToXML(@RequestBody final Auction request) throws IOException {
 
         try {
@@ -71,22 +78,22 @@ public class AdministratorController {
             File file = new File("employee.xml");
             jaxbMarshaller.marshal(request, file);
 
-          /*  DiskFileItem fileItem = new DiskFileItem("file", "text/plain", false, file.getName(), (int) file.length() , file.getParentFile());
+          *//*  DiskFileItem fileItem = new DiskFileItem("file", "text/plain", false, file.getName(), (int) file.length() , file.getParentFile());
             fileItem.getOutputStream();
             MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
-            storageService.save( multipartFile);*/
+            storageService.save( multipartFile);*//*
 
         } catch (JAXBException e) {
             e.printStackTrace();
         }
 
-      /*  String filename = "employee.xml";
+      *//*  String filename = "employee.xml";
         Resource file = storageService.loadAsResource(filename);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + file.getFilename() + "\"").body(file);*/
+                "attachment; filename=\"" + file.getFilename() + "\"").body(file);*//*
         String filename = "employee.xml";
         Resource file = storageService.load(filename);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
-    }
+    }*/
 }
