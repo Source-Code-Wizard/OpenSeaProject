@@ -28,7 +28,7 @@ public class MatrixFactorizationController {
     }
 
     @GetMapping("/auctions")
-    List<Auction> getPostsOrdered(@RequestParam(required = false)String username){
+    List<Auction> getAuctionsOrdered(@RequestParam(required = false)String username){
 
         //System.out.println("USERNAME IS "+username);
 
