@@ -1,5 +1,7 @@
 package com.example.webapplication.User;
 
+import com.example.webapplication.Auction.Auction;
+import com.example.webapplication.AuctionView.AuctionView;
 import com.example.webapplication.Message.Message;
 import com.example.webapplication.Bidder.Bidder;
 import com.example.webapplication.Role.Role;
@@ -76,6 +78,10 @@ public class User  { //Composite primary keys require Serializible
     @PrimaryKeyJoinColumn
     @JsonIgnore
     private Bidder bidder;*/
+
+    /*@OneToMany(mappedBy = "user" ,cascade = CascadeType.ALL, fetch = FetchType.LAZY )
+    @JsonIgnore
+    private List<AuctionView> userAuctionViews = new ArrayList<>();*/
 
     public User() {
     }

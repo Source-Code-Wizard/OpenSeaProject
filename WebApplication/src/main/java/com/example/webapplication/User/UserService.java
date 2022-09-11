@@ -6,6 +6,7 @@ import com.example.webapplication.Role.RoleRepository;
 import com.example.webapplication.WebConfiguration.AuthenticatedUser;
 import com.example.webapplication.WebConfiguration.JWTs.JWTutils;
 import com.example.webapplication.WebConfiguration.JWTs.JwtResponse;
+import com.example.webapplication.WebConfiguration.RefreshToken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -41,18 +43,24 @@ public class UserService {
 
     private BCryptPasswordEncoder passwordEncoder;
 
+    private final RefreshTokenService refreshTokenService;
+
+    @Autowired
+    JWTutils jwTutils;
+
     @Autowired
     RoleRepository roleRepository;
 
     @Autowired
     public UserService(UserRepository userRepository, AuthenticationManager authenticationManager,
                        BCryptPasswordEncoder passwordEncoder , RoleRepository roleRepository,
-                       AdminRepository adminRepository) {
+                       AdminRepository adminRepository,RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.authenticationManager=authenticationManager;
         this.passwordEncoder=passwordEncoder;
         this.roleRepository=roleRepository;
         this.adminRepository=adminRepository;
+        this.refreshTokenService=refreshTokenService;
     }
 
     public List<User> getAllUsers(){
@@ -81,19 +89,23 @@ public class UserService {
             System.out.println(userName);
             System.out.println(userPassword);
 
-            Authentication authObject= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, userPassword));
+            Authentication authentication= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, userPassword));
 
-            SecurityContextHolder.getContext().setAuthentication(authObject);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String jwt = JWTutils.generateJwtToken(authObject);
+            AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
 
-            AuthenticatedUser authenticatedUser = (AuthenticatedUser) authObject.getPrincipal();
+            String jwt = jwTutils.generateJwtToken(userDetails);
+
+            AuthenticatedUser authenticatedUser = (AuthenticatedUser) authentication.getPrincipal();
 
             List<String> roles = authenticatedUser.getAuthorities().stream()
                     .map(item -> item.getAuthority())
                     .collect(Collectors.toList());
 
-            return ResponseEntity.ok(new JwtResponse(jwt, authenticatedUser.getUsername(), authenticatedUser.getEmail(), roles));
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+            return ResponseEntity.ok(new JwtResponse(jwt, authenticatedUser.getUsername(), authenticatedUser.getEmail(), roles,refreshToken.getToken()));
 
         } catch (BadCredentialsException e) {
             return new ResponseEntity<>("Invalid credentials!", HttpStatus.BAD_REQUEST);
@@ -135,5 +147,19 @@ public class UserService {
         return new ResponseEntity<>("All users have been deleted!", HttpStatus.OK);
     }
 
+
+    public ResponseEntity<?> refreshtoken(TokenRefreshRequest request) {
+
+        String requestRefreshToken = request.getRefreshToken();
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String token = jwTutils.generateTokenFromUsername(user.getUsername());
+                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+                })
+                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
+                        "Refresh token is not in database!"));
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.example.webapplication.Auction;
 
+import com.example.webapplication.AuctionView.AuctionView;
 import com.example.webapplication.Bid.Bid;
 import com.example.webapplication.Category.Category;
 import com.example.webapplication.Seller.Seller;
@@ -39,6 +40,7 @@ public class Auction {
     )
 
     @GeneratedValue( strategy = GenerationType.SEQUENCE,generator = "user_sequence")
+    @Column(name = "item_id")
     private Long itemId;
 
     @Column(columnDefinition="LONGTEXT",length = 65555)
@@ -67,9 +69,7 @@ public class Auction {
     private LocalDateTime auctionEndTime;
 
     @ManyToOne
-    //@JsonIgnore
     @JoinColumn(name = "user_id" /*nullable = false*/)
-    //@JsonBackReference
     private Seller seller;
 
     @Column(name="description",columnDefinition="LONGTEXT",length = 65555)
@@ -90,6 +90,12 @@ public class Auction {
     @XmlElement(name="Category")
     @ManyToMany(fetch = FetchType.EAGER,targetEntity = Category.class)
     private Set<Category> categories = new HashSet<>();
+
+
+
+   /* @OneToMany(mappedBy = "auction" ,cascade = CascadeType.ALL, fetch = FetchType.LAZY )
+    @JsonIgnore
+    private List<AuctionView> AuctionViews = new ArrayList<>();*/
 
     public Seller getSeller() {
         return seller;
