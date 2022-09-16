@@ -17,4 +17,4 @@
 The backend has admin/user/bidder/seller security implemented and CORS policy for the links. Also it is using SQL queries to fetch data from the MySQL server and supports POST, GET, PUT, DELETE as methods of giving data to the frontend.
 
 # Built With
-https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white
+![](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
