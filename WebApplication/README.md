@@ -18,3 +18,4 @@ The backend has admin/user/bidder/seller security implemented and CORS policy fo
 
 # Built With
 ![](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
+![](https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
