@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # OpenSea
 
@@ -15,3 +16,6 @@ OpenSea is a Web application that handles auctions , implemented using Spring bo
 
 Many thanks to @ioannaoiko with which we made the web-application together!
 
+=======
+# OpenSeaProject
+>>>>>>> 2e0170ce5b8210d21f27665e9ef71ed2e032d493
