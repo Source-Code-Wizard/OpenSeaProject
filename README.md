@@ -1,5 +1,5 @@
 
-# OpenSea
+# 	:computer: OpenSea
 
 OpenSea is a Web application that handles auctions , implemented using Spring boot and React.js
 
