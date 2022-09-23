@@ -71,6 +71,8 @@ public class AuctionService {
             Optional<Auction> optionalAuction = auctionRepository.findById(bidDTO.getAuctionId());
             if (optionalAuction.get().getCurrently()>=bidDTO.getMoneyOffered()){
                 return new ResponseEntity<>("Offer can not be that low!", HttpStatus.BAD_REQUEST);
+            }else if(optionalAuction.get().getBuyPrice()>=bidDTO.getMoneyOffered()){
+                return new ResponseEntity<>("first bid must be higher than the buy price!", HttpStatus.BAD_REQUEST);
             }
             officialUser=potenialUser.get();
 
@@ -281,15 +283,14 @@ public class AuctionService {
             auctionSpecification.add(new SearchCriteria("description",description,SearchOperation.MATCH));
         }
 
-
-
         Page<Auction> pageWithResults = auctionRepository.findAll(auctionSpecification,pageable);
 
         /* we return the auctions that havent expired yet*/
         LocalDateTime now = LocalDateTime.now();
         for (int i = 0; i <pageWithResults.getContent().size(); i++) {
             boolean isActive = now.isBefore(pageWithResults.getContent().get(i).getAuctionEndTime());
-            if (isActive)
+            boolean hasStarted = now.isAfter(pageWithResults.getContent().get(i).getAuctionStartedTime());
+            if ( hasStarted && isActive )
                 Auctions.add(pageWithResults.getContent().get(i));
         }
 
