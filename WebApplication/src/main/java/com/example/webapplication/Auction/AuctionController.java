@@ -1,28 +1,26 @@
 package com.example.webapplication.Auction;
 
-import com.example.webapplication.User.User;
-import java.util.*;
+import com.example.webapplication.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auctions")
 @CrossOrigin(origins = "https://localhost:3000/OpensSea/Auctions",allowCredentials = "true")
 public class AuctionController {
     private final AuctionService auctionService;
+    private final UserService userService;
 
     @Autowired
-    public AuctionController(AuctionService auctionService) {
+    public AuctionController(AuctionService auctionService, UserService userService) {
         this.auctionService = auctionService;
+        this.userService = userService;
     }
 
 
@@ -35,6 +33,11 @@ public class AuctionController {
     @GetMapping("/getAllActiveAuctions")
     public List<Auction> getAllActiveAuctions(){
         return auctionService.getAllActiveAuctions();
+    }
+
+    @GetMapping("/getUsersAuctions/{userId}")
+    public List<Auction> getUsersAuctions(@PathVariable("userId") String userId){
+        return auctionService.getUsersAuctions(Long.parseLong(userId));
     }
 
     /* FUNCTION FOR TESTING */
@@ -88,4 +91,11 @@ public class AuctionController {
     public ResponseEntity<?> sellerSendsMessageAfterAuction(@RequestBody Auction auction, @RequestBody String message){
         return new ResponseEntity<>(auctionService.sellerSendsMessageAfterAuction(auction, message), HttpStatus.OK);
     }
+
+//    @GetMapping("/getUserId/{username}")
+////    @PreAuthorize("hasAuthority('ADMIN')")
+//    public ResponseEntity<?> getUserId(@PathVariable("username") String username){
+//        System.out.println(username);
+//        return userService.getUserId(username);
+//    }
 }

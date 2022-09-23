@@ -19,7 +19,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -160,6 +159,11 @@ public class UserService {
                 })
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
                         "Refresh token is not in database!"));
+    }
+
+    public ResponseEntity<?> getUserId(String userName){
+        System.out.println(userRepository.findByUsername(userName).get().getUserId());
+        return new ResponseEntity<>(userRepository.findByUsername(userName).get().getUserId(), HttpStatus.OK);
     }
 
 }

@@ -1,30 +1,27 @@
 package com.example.webapplication.Auction;
 
 import com.example.webapplication.Bid.Bid;
-import com.example.webapplication.Bid.BidSortByMoney;
-import com.example.webapplication.Bid.bidDTO;
 import com.example.webapplication.Bid.BidRepository;
+import com.example.webapplication.Bid.bidDTO;
 import com.example.webapplication.Bidder.Bidder;
 import com.example.webapplication.Bidder.BidderRepository;
 import com.example.webapplication.Category.Category;
 import com.example.webapplication.Category.CategoryRepository;
-import com.example.webapplication.Message.Message;
 import com.example.webapplication.Message.MessageService;
 import com.example.webapplication.Seller.Seller;
 import com.example.webapplication.Seller.SellerRepository;
 import com.example.webapplication.User.User;
 import com.example.webapplication.User.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.*;
-import java.lang.*;
-import java.time.LocalDateTime;
 
 
 @Service
@@ -224,6 +221,18 @@ public class AuctionService {
     public List<Auction> getAllActiveAuctions(){
         return auctionRepository.findAllWithAuctionEndTimeAfter(LocalDateTime.now());
 
+    }
+
+    public List<Auction> getUsersAuctions(Long userId){
+        List<Auction> usersAuctions = new ArrayList<>();
+//        return auctionRepository.findUsersAuctions(userId);
+        List<Auction> allAuctions = auctionRepository.findAll();
+        for(int i = 0; i < allAuctions.size(); i++){
+            if(allAuctions.get(i).getSeller().getId() == userId){
+                usersAuctions.add(allAuctions.get(i));
+            }
+        }
+        return usersAuctions;
     }
 
     public ResponseEntity<?> deleteAuction(Auction auctionToDelete){

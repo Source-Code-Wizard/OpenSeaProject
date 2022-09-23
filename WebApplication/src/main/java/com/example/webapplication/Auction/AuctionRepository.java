@@ -4,12 +4,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
 import java.time.LocalDateTime;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,8 @@ public interface AuctionRepository extends JpaRepository<Auction,Long> , JpaSpec
 
 //    @Query("SELECT a.seller_id FROM Auction a WHERE a.item_id = :auction_id")
 //    Long getSellerId(@Param("auction_id") Long auction_id);
+//    @Query("SELECT a FROM Auction a WHERE a.seller_id = :userId")
+//    List<Auction> findUsersAuctions(@Param("userId") Long userId);
 
     Page<Auction> findAll(Specification<Auction> sp, Pageable pageable);
 

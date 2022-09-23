@@ -20,6 +20,7 @@ import java.util.Optional;
 */
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "https://localhost:3000",allowCredentials = "true")
 public class UserController {
 
     private final UserService userService;
@@ -38,7 +39,7 @@ public class UserController {
         Simply put, the @RequestBody annotation maps the HttpRequest body to a transfer or domain object,
         enabling automatic deserialization of the inbound HttpRequest body onto a Java object.(domain object to java object)
     */
-    @CrossOrigin(origins = "*")
+//    @CrossOrigin(origins = "*")
     @PostMapping()
     public ResponseEntity<User> registerUserToBase(@RequestBody User userForRegistration) {
         return new ResponseEntity<>(userService.registerUserToBase(userForRegistration), HttpStatus.CREATED);
@@ -49,7 +50,7 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserByUserName(userName), HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "*")
+//    @CrossOrigin(origins = "*")
     @PreAuthorize("hasAuthority('USER')")
     @DeleteMapping("/deleteAll")
     public ResponseEntity<?> deleteAllUsers() {
@@ -60,5 +61,12 @@ public class UserController {
     public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
         System.out.println(request.toString());
         return new ResponseEntity<>(userService.refreshtoken(request), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/getUserId/{username}")
+//    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> getUserId(@PathVariable("username") String username){
+        System.out.println(username);
+        return userService.getUserId(username);
     }
 }

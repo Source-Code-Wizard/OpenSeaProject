@@ -1,6 +1,5 @@
 package com.example.webapplication.Auction;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -8,7 +7,6 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +41,7 @@ public class AuctionDTO {
     private Long seller_id;
 
     public AuctionDTO(String name, double currently, double buyPrice, double firstBid, int numOfBids,
-                      String location, LocalDateTime auctionStartedTime, LocalDateTime auctionEndTime,
+                      String location, LocalDateTime auctionEndTime,
                       String description, Long seller_id ,List<String> listOfCategories) {
         this.name = name;
         Currently = currently;
@@ -51,7 +49,7 @@ public class AuctionDTO {
         this.firstBid = firstBid;
         this.numOfBids = numOfBids;
         this.location = location;
-        this.auctionStartedTime = auctionStartedTime;
+        this.auctionStartedTime = LocalDateTime.now();
         this.auctionEndTime = auctionEndTime;
         this.description = description;
         this.listOfCategories = listOfCategories;
