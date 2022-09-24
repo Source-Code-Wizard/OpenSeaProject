@@ -49,6 +49,11 @@ public class Auction {
     @Column(name="Currently")
     private double Currently;
 
+    @Column(name="Latitude")
+    private Double Latitude;
+
+    @Column(name="Longtitude")
+    private Double Longtitude;
     private double buyPrice;
 
     private double firstBid;
@@ -109,7 +114,7 @@ public class Auction {
 
     public Auction(String name, double currently, double buyPrice, double firstBid, int numOfBids,
                    String location, LocalDateTime auctionStartedTime, LocalDateTime auctionEndTime,
-                   String description) {
+                   String description,Double Longtitude,Double Latitude) {
         this.name = name;
         Currently = currently;
         this.buyPrice = buyPrice;
@@ -119,6 +124,8 @@ public class Auction {
         this.auctionStartedTime = auctionStartedTime;
         this.auctionEndTime = auctionEndTime;
         this.description = description;
+        this.Latitude=Latitude;
+        this.Longtitude=Longtitude;
     }
 
     public Auction(long id, String name, double currently, double buyPrice, double firstBid, int numOfBids,

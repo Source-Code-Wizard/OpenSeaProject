@@ -158,6 +158,9 @@ public class AuctionService {
     public ResponseEntity<?> registerAuctionToBase(AuctionDTO auctionDTO) {
 
         System.out.println(auctionDTO.getSeller_id());
+        System.out.println("Lat "+auctionDTO.getLat());
+        System.out.println("Lng "+auctionDTO.getLng());
+
 
         //Seller seller = new Seller(0,auctionDTO.getSeller_id());
 
@@ -175,7 +178,8 @@ public class AuctionService {
         Auction auctionForRegistration = new Auction(
                 auctionDTO.getName(),auctionDTO.getCurrently(),auctionDTO.getBuyPrice(),
                 auctionDTO.getFirstBid(),auctionDTO.getNumOfBids(),auctionDTO.getLocation(),
-                auctionDTO.getAuctionStartedTime(),auctionDTO.getAuctionEndTime(),auctionDTO.getDescription());
+                auctionDTO.getAuctionStartedTime(),auctionDTO.getAuctionEndTime(),auctionDTO.getDescription(),
+                auctionDTO.getLng(), auctionDTO.getLat());
 
         List<String> categories =auctionDTO.getListOfCategories();
         Set<Category> categorySet = new HashSet<>();

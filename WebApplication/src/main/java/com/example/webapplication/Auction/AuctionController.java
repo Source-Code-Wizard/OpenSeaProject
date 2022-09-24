@@ -23,7 +23,6 @@ public class AuctionController {
         this.userService = userService;
     }
 
-
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SELLER')")
     @PostMapping()
     public ResponseEntity<?> registerAuctionToBase(@RequestBody AuctionDTO auctionForRegistration) {

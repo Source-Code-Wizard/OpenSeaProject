@@ -40,9 +40,13 @@ public class AuctionDTO {
 
     private Long seller_id;
 
+    private Double lat;
+
+    private Double lng;
+
     public AuctionDTO(String name, double currently, double buyPrice, double firstBid, int numOfBids,
                       String location, LocalDateTime auctionEndTime,
-                      String description, Long seller_id ,List<String> listOfCategories) {
+                      String description, Long seller_id ,List<String> listOfCategories,Double lat,Double lng) {
         this.name = name;
         Currently = currently;
         this.buyPrice = buyPrice;
@@ -54,5 +58,7 @@ public class AuctionDTO {
         this.description = description;
         this.listOfCategories = listOfCategories;
         this.seller_id=seller_id;
+        this.lat=lat;
+        this.lng=lng;
     }
 }
