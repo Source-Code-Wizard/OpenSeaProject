@@ -17,6 +17,7 @@ public class LoadMatrixFactorization {
     MatrixFactorization matrixFactorization;
 
     @Bean("MatrixFactorizationInit")
+    @DependsOn({"LoadAuction"})
     public CommandLineRunner initMatrixFactorization(MatrixFactorization matrixFactorization) {
         this.matrixFactorization = matrixFactorization;
         return args -> {

@@ -10,13 +10,17 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @XmlTransient
     private Long categoryId;
     private String name;
 
     public Category(String caterogoryName) {
         this.name = caterogoryName;
+    }
+
+    public Category(Long categoryId, String name) {
+        this.categoryId = categoryId;
+        this.name = name;
     }
 
     @Override

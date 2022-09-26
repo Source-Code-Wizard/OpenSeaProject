@@ -11,10 +11,6 @@ import java.util.Set;
 public class Role {
 
     @Id
-    @SequenceGenerator(
-            name= "role_sequence", sequenceName = "role_sequence",allocationSize = 1
-    )
-    @GeneratedValue( strategy = GenerationType.SEQUENCE,generator = "role_sequence")
     private long id;
 
   /*  @ManyToMany(targetEntity = User.class)
@@ -22,6 +18,11 @@ public class Role {
     public Role() {
     }
     public Role(String name) {
+        this.name = name;
+    }
+
+    public Role(long id, String name) {
+        this.id = id;
         this.name = name;
     }
 

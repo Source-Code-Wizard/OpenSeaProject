@@ -27,4 +27,5 @@ public interface AuctionRepository extends JpaRepository<Auction,Long> , JpaSpec
     Page<Auction> findAll(Specification<Auction> sp, Pageable pageable);
 
     Optional<Auction> findById(Long id);
+    Optional<Auction> findByName(String name);
 }

@@ -72,17 +72,6 @@ public class User  { //Composite primary keys require Serializible
     @PrimaryKeyJoinColumn
     private Seller seller;
 
-
-    /* One to One ( user-bidder ) relationship */
-    /*@OneToOne(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
-    @PrimaryKeyJoinColumn
-    @JsonIgnore
-    private Bidder bidder;*/
-
-    /*@OneToMany(mappedBy = "user" ,cascade = CascadeType.ALL, fetch = FetchType.LAZY )
-    @JsonIgnore
-    private List<AuctionView> userAuctionViews = new ArrayList<>();*/
-
     public User() {
     }
     /* Administrator constructor*/
@@ -100,6 +89,16 @@ public class User  { //Composite primary keys require Serializible
         this.country = country;
         this.isRegistered=false;
     }
+
+    /*
+    * Admin Constructor
+    */
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
     @ManyToMany(fetch = FetchType.EAGER,targetEntity = Role.class)
     private Set<Role> roles = new HashSet<>();
 

@@ -35,11 +35,12 @@ import java.util.Set;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Auction {
     @Id
-    @SequenceGenerator(
+  /*  @SequenceGenerator(
             name= "user_sequence", sequenceName = "user_sequence",allocationSize = 1
     )
 
-    @GeneratedValue( strategy = GenerationType.SEQUENCE,generator = "user_sequence")
+    @GeneratedValue( strategy = GenerationType.SEQUENCE,generator = "user_sequence")*/
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private Long itemId;
 
@@ -97,11 +98,6 @@ public class Auction {
     private Set<Category> categories = new HashSet<>();
 
 
-
-   /* @OneToMany(mappedBy = "auction" ,cascade = CascadeType.ALL, fetch = FetchType.LAZY )
-    @JsonIgnore
-    private List<AuctionView> AuctionViews = new ArrayList<>();*/
-
     public Seller getSeller() {
         return seller;
     }
@@ -128,10 +124,11 @@ public class Auction {
         this.Longtitude=Longtitude;
     }
 
-    public Auction(long id, String name, double currently, double buyPrice, double firstBid, int numOfBids,
-                   String location, LocalDateTime auctionStartedTime, LocalDateTime auctionEndTime,
-                   String description) {
-        this.itemId = id;
+
+    public Auction(Long itemId, String name, double currently, double buyPrice,
+                   double firstBid, int numOfBids, String location, LocalDateTime auctionStartedTime,
+                   LocalDateTime auctionEndTime, String description) {
+        this.itemId = itemId;
         this.name = name;
         Currently = currently;
         this.buyPrice = buyPrice;
@@ -142,5 +139,18 @@ public class Auction {
         this.auctionEndTime = auctionEndTime;
         this.description = description;
     }
-
+    public Auction(String name, double currently, double buyPrice,
+                   double firstBid, int numOfBids, String location, LocalDateTime auctionStartedTime,
+                   LocalDateTime auctionEndTime, String description) {
+        this.itemId = itemId;
+        this.name = name;
+        Currently = currently;
+        this.buyPrice = buyPrice;
+        this.firstBid = firstBid;
+        this.numOfBids = numOfBids;
+        this.location = location;
+        this.auctionStartedTime = auctionStartedTime;
+        this.auctionEndTime = auctionEndTime;
+        this.description = description;
+    }
 }
