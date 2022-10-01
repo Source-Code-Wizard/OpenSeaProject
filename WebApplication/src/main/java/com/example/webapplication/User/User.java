@@ -1,12 +1,8 @@
 package com.example.webapplication.User;
 
-import com.example.webapplication.Auction.Auction;
-import com.example.webapplication.AuctionView.AuctionView;
 import com.example.webapplication.Message.Message;
-import com.example.webapplication.Bidder.Bidder;
 import com.example.webapplication.Role.Role;
 import com.example.webapplication.Seller.Seller;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,10 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -97,6 +90,7 @@ public class User  { //Composite primary keys require Serializible
         this.username = username;
         this.password = password;
         this.email = email;
+        this.isRegistered = true;
     }
 
     @ManyToMany(fetch = FetchType.EAGER,targetEntity = Role.class)

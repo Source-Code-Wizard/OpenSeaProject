@@ -66,7 +66,17 @@ public class UserController {
     @GetMapping("/getUserId/{username}")
 //    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> getUserId(@PathVariable("username") String username){
-        System.out.println(username);
+//        System.out.println(username);
         return userService.getUserId(username);
+    }
+
+    @GetMapping("/getInbox/{id}")
+    public ResponseEntity<?> getInbox(@PathVariable("id") Long id){
+        return userService.getInbox(id);
+    }
+
+    @GetMapping("/getOutbox/{id}")
+    public ResponseEntity<?> getOutbox(@PathVariable("id") Long id){
+        return userService.getOutbox(id);
     }
 }

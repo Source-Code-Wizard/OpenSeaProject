@@ -1,6 +1,8 @@
 package com.example.webapplication.User;
 
 import com.example.webapplication.Administrator.AdminRepository;
+import com.example.webapplication.Message.Message;
+import com.example.webapplication.Message.messageDTO;
 import com.example.webapplication.Role.Role;
 import com.example.webapplication.Role.RoleRepository;
 import com.example.webapplication.WebConfiguration.AuthenticatedUser;
@@ -19,10 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /*
@@ -162,8 +161,36 @@ public class UserService {
     }
 
     public ResponseEntity<?> getUserId(String userName){
-        System.out.println(userRepository.findByUsername(userName).get().getUserId());
-        return new ResponseEntity<>(userRepository.findByUsername(userName).get().getUserId(), HttpStatus.OK);
+//        System.out.println(userRepository.findByUsername(userName).get().getUserId());
+        Optional<User> user = userRepository.findByUsername(userName);
+        if(user.isPresent()){
+            return new ResponseEntity<>(user.get().getUserId(), HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public ResponseEntity<?> getInbox(Long id){
+        Set<Message> messages = new HashSet<>();
+        messages = userRepository.findById(id).get().getInbox();
+        List<messageDTO> newMessages = new ArrayList<>();
+        for(Message i:messages ){
+            messageDTO newMessage = new messageDTO(i.getSender().getUsername(), i.getReceiver().getUsername(), i.getMessage(), i.getDateTime());
+            newMessages.add(newMessage);
+        }
+        return new ResponseEntity<>(newMessages, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getOutbox(Long id){
+        Set<Message> messages = new HashSet<>();
+        messages = userRepository.findById(id).get().getOutbox();
+        List<messageDTO> newMessages = new ArrayList<>();
+        for(Message i:messages ){
+            messageDTO newMessage = new messageDTO(i.getSender().getUsername(), i.getReceiver().getUsername(), i.getMessage(), i.getDateTime());
+            newMessages.add(newMessage);
+        }
+        return new ResponseEntity<>(newMessages, HttpStatus.OK);
     }
 
 }
