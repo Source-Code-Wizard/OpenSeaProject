@@ -60,6 +60,8 @@ public class AuctionService {
 
     public  ResponseEntity<?> placeBid(bidDTO bidDTO){
 
+        System.out.println("Bid request");
+
         System.out.println(bidDTO.toString());
         String userName = bidDTO.getUsername();
         Optional<User> potenialUser = userRepository.findByUsername(userName);
@@ -88,17 +90,27 @@ public class AuctionService {
 
             Optional<Bid> optionalBid = bidRepository.myFind(optionalAuction.get().getItemId(), newBidder.getId());
             Bid newBid;
+            boolean wasPresent=false;
             if (optionalBid.isPresent()){
                 newBid=optionalBid.get();
+                System.out.println(newBid.getBid_id());
                 newBid.setLocalBidDateTime(bidDTO.getBidSubmittedTime());
                 newBid.setMoneyAmount(bidDTO.getMoneyOffered());
                 newBid.setBidderUsername(officialUser.getUsername());
-            }else newBid = new Bid(bidDTO.getBidSubmittedTime(),bidDTO.getMoneyOffered(),officialUser.getUsername());
+                newBid.setItem_Id(bidDTO.getAuctionId());
+                bidRepository.save(newBid);
+                wasPresent=true;
+            }else{
+                newBid = new Bid(bidDTO.getBidSubmittedTime(),bidDTO.getMoneyOffered(),officialUser.getUsername());
+                newBid.setItem_Id(bidDTO.getAuctionId());
+            }
 
-            System.out.println("85");
-            newBidder.getBidsList().add(newBid);
-            //newBidder.setUser(officialUser);
-            newBid.setBidder(newBidder);
+            System.out.println("bid id " + newBid.getBid_id());
+            if (!wasPresent){
+                newBidder.getBidsList().add(newBid);
+                newBid.setBidder(newBidder);
+            }
+            System.out.println("Bid list size is "+newBidder.getBidsList().size());
 
             //officialUser.setBidder(newBidder);
             userRepository.save(officialUser);
@@ -119,6 +131,7 @@ public class AuctionService {
                 }
                 else {
                     /* check if this specific biddder has already a bid and if so, update it*/
+                    System.out.println("(0):auction bid list size is "+auctionPure.getBidList().size());
                     for (int bid = 0; bid <auctionPure.getBidList().size() ; bid++) {
                         Bid oldBid = auctionPure.getBidList().get(bid);
                         if (oldBid.getBidder().getId()==newBid.getBidder().getId()){
@@ -133,6 +146,7 @@ public class AuctionService {
 
 
                 auctionPure.setBidList(updatedAuctionBidList);
+                System.out.println("(2):auction bid list size is "+updatedAuctionBidList.size());
 
                 Collections.sort(updatedAuctionBidList);
                 for (int i = 0; i <updatedAuctionBidList.size() ; i++) {
@@ -144,10 +158,13 @@ public class AuctionService {
                 //auctionPure.getBidList().add(newBid);
                 //auctionPure.setBidList(auctionPure.getBidList());
 
-                newBid.setAuction(auctionPure);
-               // bidRepository.save(newBid);
+                //newBid.setAuction(auctionPure);
+
+
+
 
                 auctionRepository.save(auctionPure);
+                System.out.println("(1):auction bid list size is "+auctionPure.getBidList().size());
                 return new ResponseEntity<>("Pid was placed succesfully", HttpStatus.CREATED);
             }
         }

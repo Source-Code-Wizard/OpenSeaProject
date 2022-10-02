@@ -36,10 +36,11 @@ public class Bid implements Serializable,Comparable<Bid> {
        return (int) (d.getMoneyAmount()-this.getMoneyAmount());
    }
     @Id
-    @SequenceGenerator(
+   /* @SequenceGenerator(
            name= "user_sequence", sequenceName = "user_sequence",allocationSize = 1
     )
-    @GeneratedValue( strategy = GenerationType.SEQUENCE,generator = "user_sequence")
+    @GeneratedValue( strategy = GenerationType.SEQUENCE,generator = "user_sequence")*/
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name="bid_id")
     private Long bid_id;
 
@@ -61,10 +62,13 @@ public class Bid implements Serializable,Comparable<Bid> {
     private Double moneyAmount;
     private String bidderUsername;
 
-    @ManyToOne
+    @Column(name="item_id")
+    private Long item_Id;
+
+   /* @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "item_id" /*nullable = false*/)
-    private Auction auction;
+    @JoinColumn(name = "item_id" *//*nullable = false*//*)
+    private Auction auction;*/
 
     public Bid() {
     }

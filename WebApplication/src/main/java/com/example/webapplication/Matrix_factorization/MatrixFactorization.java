@@ -97,7 +97,8 @@ public class MatrixFactorization {
             System.out.println("ViewList is :"+userAuctionViewsHistory.size());
 
                 for (Bid eachBid : userBidHistory){
-                    Long auction_id=eachBid.getAuction().getItemId();
+                    //Long auction_id=eachBid.getAuction().getItemId();
+                    Long auction_id=eachBid.getItem_Id();
                     int auction_index = auction_ids.indexOf(auction_id);
                     auction_dataMatrix.set(userIndex, auction_index, auction_dataMatrix.get(userIndex, auction_index) + 1);
                 }

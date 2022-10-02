@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface BidRepository extends JpaRepository<Bid,Long> {
-    @Query("SELECT b FROM Bid b WHERE b.auction.itemId = :itemId and b.bidder.id =:bidderId")
+    @Query("SELECT b FROM Bid b WHERE b.item_Id = :itemId and b.bidder.id =:bidderId")
     Optional<Bid> myFind(@Param("itemId") Long itemId,@Param("bidderId") Long bidderId);
 
     @Query("SELECT b FROM Bid b WHERE b.bidder.id =:bidderId")

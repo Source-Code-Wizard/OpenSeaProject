@@ -86,7 +86,8 @@ public class Auction {
     @ToString.Exclude
     @XmlElementWrapper(name="Bids")
     @XmlElement(name="Bid")
-    @OneToMany( mappedBy = "auction" ,cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany( cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "auction_id")
     // we create to Bid-table a new column named:Auction_itemID which refers to Auction.itemId column
    // @JoinColumn(name = "Auction_itemID", referencedColumnName = "itemId")
     private List<Bid> bidList = new ArrayList<>();
