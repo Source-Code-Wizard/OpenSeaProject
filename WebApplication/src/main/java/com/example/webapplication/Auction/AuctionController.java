@@ -62,6 +62,7 @@ public class AuctionController {
                                                  @RequestParam(required = false)String location,
                                                  @RequestParam(required = false)String description)
     {
+        System.out.println(currently);
         return auctionService.searchForAuction(category,currently,location,description);
     }
 

@@ -317,12 +317,14 @@ public class AuctionService {
         AuctionSpecification auctionSpecification = new AuctionSpecification();
         List<Auction> Auctions = new ArrayList<Auction>();
         System.out.println("CATEGORY IS "+categoryName);
+        System.out.println(price);
         /* we search based on the parameteres the user gave as input */
         if (categoryName!=null){
             System.out.println(categoryName);
             auctionSpecification.add(new SearchCriteria("categories",categoryName,SearchOperation.JOIN));
         }
         if (price!=null){
+            System.out.println("327");
             auctionSpecification.add(new SearchCriteria("Currently",price,SearchOperation.LESS_THAN));
         }
         if(auctionLocation!=null){
