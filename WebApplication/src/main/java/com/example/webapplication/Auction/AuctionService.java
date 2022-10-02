@@ -241,36 +241,55 @@ public class AuctionService {
         return usersAuctions;
     }
 
-    public ResponseEntity<?> deleteAuction(Auction auctionToDelete){
-        if(auctionToDelete.getAuctionStartedTime().isAfter(LocalDateTime.now()) || (auctionToDelete.getNumOfBids() == 0)){
-            auctionRepository.delete(auctionToDelete);
-            return new ResponseEntity<>("Auction has been deleted!", HttpStatus.OK);
-        }
+    public ResponseEntity<?> deleteAuction(Long itemId){
+        Optional<Auction> auctionToDelete = auctionRepository.findById(itemId);
+        if(auctionToDelete.isPresent()) {
+            Auction auction = auctionToDelete.get();
+            if (auction.getAuctionStartedTime().isAfter(LocalDateTime.now()) || (auction.getNumOfBids() == 0)) {
+//                auctionRepository.deleteById(itemId);
+                Seller seller = auction.getSeller();
+                List<Auction> auctions = seller.getSellersAuctions();
+                auctions.remove(auction);
+                seller.setSellersAuctions(auctions);
+                auction.setSeller(null);
+                sellerRepository.save(seller);
+//                auctionRepository.save(auction);
+                return new ResponseEntity<>("Auction has been deleted!", HttpStatus.OK);
+            }
 
-        return new ResponseEntity<>("This auction can't be deleted!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("This auction can't be deleted!", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("There is no such auction!", HttpStatus.BAD_REQUEST);
+
     }
 
-    public  ResponseEntity<?> editAuction(Auction auctionToEdit){
-        Optional<Auction> existingAuction = auctionRepository.findById(auctionToEdit.getItemId());
-        if(existingAuction.isPresent()){
+    public  ResponseEntity<?> editAuction(Long itemId, String name, LocalDateTime auctionEndTime, List<String> categories, String description, String location) {
+        Optional<Auction> existingAuction = auctionRepository.findById(itemId);
+        if (existingAuction.isPresent()) {
             Auction pure = existingAuction.get();
-            if(pure.getAuctionStartedTime().isAfter(LocalDateTime.now()) || pure.getNumOfBids() == 0){
-                pure.setName(auctionToEdit.getName());
-                pure.setAuctionEndTime(auctionToEdit.getAuctionEndTime());
-                pure.setAuctionStartedTime(auctionToEdit.getAuctionStartedTime());
-                pure.setCategories(auctionToEdit.getCategories());
-                pure.setCurrently(auctionToEdit.getCurrently());
-                pure.setBidList(auctionToEdit.getBidList());
-                pure.setBuyPrice(auctionToEdit.getBuyPrice());
-                pure.setDescription(auctionToEdit.getDescription());
-                pure.setFirstBid(auctionToEdit.getFirstBid());
-                pure.setLocation(auctionToEdit.getLocation());
-                pure.setNumOfBids(auctionToEdit.getNumOfBids());
+//            System.out.println(name);
+            if (pure.getAuctionStartedTime().isAfter(LocalDateTime.now()) || pure.getNumOfBids() == 0) {
+                pure.setName(name);
+                pure.setAuctionEndTime(auctionEndTime);
+
+                Set<Category> categorySet = new HashSet<>();
+
+                /* we add the categories */
+                for (int categoryIndex = 0; categoryIndex < categories.size(); categoryIndex++) {
+                    String categoryName = categories.get(categoryIndex);
+                    Category category = categoryRepository.findByName(categoryName);
+                    categorySet.add(category);
+                    //System.out.println("Print message: "+category.toString());
+                }
+                pure.setCategories(categorySet);
+                pure.setDescription(description);
+                pure.setLocation(location);
                 auctionRepository.save(pure);
-                return new ResponseEntity<>("Auction has been edited!", HttpStatus.OK);
+                return new ResponseEntity<>("The auction was edited succesfully!", HttpStatus.OK);
             }
             return new ResponseEntity<>("This auction can't be edited!", HttpStatus.BAD_REQUEST);
         }
+
         return new ResponseEntity<>("This auction doesn't exist!", HttpStatus.BAD_REQUEST);
     }
 
@@ -426,6 +445,17 @@ public class AuctionService {
     public ResponseEntity<?> deleteAll(){
         auctionRepository.deleteAll();
         return new ResponseEntity<>("ALL AUCTIONS ARE DELETED", HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getAuctionId(String name, Double buyPrice, Long sellerId){
+        List<Auction> auctions = auctionRepository.findAll();
+        for(int i = 0; i < auctions.size(); i++){
+            Auction auction = auctions.get(i);
+            if(auction.getSeller().getId() == sellerId && auction.getName().equals(name) && auction.getBuyPrice() == buyPrice){
+                return new ResponseEntity<>(auction.getItemId(), HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }

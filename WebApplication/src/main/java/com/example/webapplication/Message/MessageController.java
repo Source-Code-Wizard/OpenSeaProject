@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ public class MessageController {
     public MessageController(MessageService messageService) {
         this.messageService = messageService;
     }
-
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @PostMapping("/message")
     public ResponseEntity<?> sendMessage(@RequestBody messageDTO message){
         return new ResponseEntity<>(messageService.sendMessage(message.getMessage(), message.getSenderUsername(), message.getReceiverUsername()), HttpStatus.OK);
@@ -43,12 +44,12 @@ public class MessageController {
     public ResponseEntity<?> deleteMessage(@PathVariable("message_id") Long id){
         return new ResponseEntity<>(messageService.deleteMessage(id), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @PostMapping("/deleteInboxMessage/{user_id}/{message_id}")
     public ResponseEntity<?> deleteInboxMessage(@PathVariable("user_id") String userId, @PathVariable("message_id") String messageId){
         return messageService.deleteInboxMessage(Long.parseLong(userId), Long.parseLong(messageId));
     }
-
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @PostMapping("/deleteOutboxMessage/{user_id}/{message_id}")
     public ResponseEntity<?> deleteOutboxMessage(@PathVariable("user_id") String userId, @PathVariable("message_id") String messageId){
         return messageService.deleteOutboxMessage(Long.parseLong(userId), Long.parseLong(messageId));

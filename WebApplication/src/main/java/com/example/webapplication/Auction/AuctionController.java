@@ -65,21 +65,28 @@ public class AuctionController {
         return auctionService.searchForAuction(category,currently,location,description);
     }
 
-
-    @DeleteMapping("/deleteAuction")
-    public ResponseEntity<?> deleteAuction(@RequestBody Auction auctionForDelete){
-        return new ResponseEntity<>(auctionService.deleteAuction(auctionForDelete),HttpStatus.OK);
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SELLER')")
+    @DeleteMapping("/deleteAuction/{itemId}")
+    public ResponseEntity<?> deleteAuction(@PathVariable("itemId") String itemId){
+        return auctionService.deleteAuction(Long.parseLong(itemId));
     }
 
-
-    @PostMapping("/editAuction")
-    public ResponseEntity<?> editAuction(@RequestBody Auction auctionToEdit){
-        return new ResponseEntity<>(auctionService.editAuction(auctionToEdit),HttpStatus.OK);
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SELLER')")
+    @PostMapping("/editAuction/{itemId}")
+    public ResponseEntity<?> editAuction(@PathVariable("itemId") String itemId,
+                                         @RequestBody EditAuctionDTO auction){
+        System.out.println(auction.getName());
+        return auctionService.editAuction(Long.parseLong(itemId), auction.getName(), auction.getAuctionEndTime(), auction.getListOfCategories(), auction.getDescription(), auction.getLocation());
     }
 
     @GetMapping("/SellerId")
     public ResponseEntity<?> getSellerId(@RequestBody Long auctionId){
         return new ResponseEntity<>(auctionService.getSellerId(auctionId), HttpStatus.OK);
+    }
+
+    @GetMapping("/AuctionId")
+    public ResponseEntity<?> getAuctionId(String name, String buyPrice, String sellerId){
+        return auctionService.getAuctionId(name, Double.parseDouble(buyPrice), Long.parseLong(sellerId));
     }
 
     @PostMapping("/chatAfterAuction")

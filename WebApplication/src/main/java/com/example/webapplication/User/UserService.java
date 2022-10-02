@@ -176,7 +176,7 @@ public class UserService {
         messages = userRepository.findById(id).get().getInbox();
         List<messageDTO> newMessages = new ArrayList<>();
         for(Message i:messages ){
-            messageDTO newMessage = new messageDTO(i.getSender().getUsername(), i.getReceiver().getUsername(), i.getMessage(), i.getDateTime());
+            messageDTO newMessage = new messageDTO(i.getBackupSender(), i.getBackupReceiver(), i.getMessage(), i.getDateTime());
             newMessages.add(newMessage);
         }
         return new ResponseEntity<>(newMessages, HttpStatus.OK);
@@ -187,7 +187,7 @@ public class UserService {
         messages = userRepository.findById(id).get().getOutbox();
         List<messageDTO> newMessages = new ArrayList<>();
         for(Message i:messages ){
-            messageDTO newMessage = new messageDTO(i.getSender().getUsername(), i.getReceiver().getUsername(), i.getMessage(), i.getDateTime());
+            messageDTO newMessage = new messageDTO(i.getBackupSender(), i.getBackupReceiver(), i.getMessage(), i.getDateTime());
             newMessages.add(newMessage);
         }
         return new ResponseEntity<>(newMessages, HttpStatus.OK);

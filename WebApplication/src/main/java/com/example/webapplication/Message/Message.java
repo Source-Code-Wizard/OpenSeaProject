@@ -25,6 +25,10 @@ public class Message {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dateTime;
 
+    private String backupSender;
+
+    private String backupReceiver;
+
     public Long getMessageId() {
         return messageId;
     }
@@ -50,10 +54,28 @@ public class Message {
     }
 
     public Message(String message, User sender, User receiver){
+        this.backupReceiver = receiver.getUsername();
+        this.backupSender = sender.getUsername();
         this.message = message;
         this.sender = sender;
         this.receiver = receiver;
         this.dateTime = LocalDateTime.now();
+    }
+
+    public String getBackupSender() {
+        return backupSender;
+    }
+
+    public void setBackupSender(String backupSender) {
+        this.backupSender = backupSender;
+    }
+
+    public String getBackupReceiver() {
+        return backupReceiver;
+    }
+
+    public void setBackupReceiver(String backupReceiver) {
+        this.backupReceiver = backupReceiver;
     }
 
     public LocalDateTime getDateTime() {

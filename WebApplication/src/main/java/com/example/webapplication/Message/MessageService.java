@@ -38,7 +38,9 @@ public class MessageService {
                 User userReceiver = optionalUserReceiver.get();
                 Message message1 = new Message(message, userSender, userReceiver);
                 message1.setSender(userSender);
+                message1.setBackupSender(userSender.getUsername());
                 message1.setReceiver(userReceiver);
+                message1.setBackupReceiver(userReceiver.getUsername());
 //                simpMessagingTemplate.convertAndSendToUser(userReceiver.getName(),"/private", message);
                 Set<Message> senderOutbox = userSender.getOutbox();
                 senderOutbox.add(message1);
@@ -73,18 +75,7 @@ public class MessageService {
         for(int i = 0; i < messageList.size(); i++){
             Message message1 = messageList.get(i);
 
-            System.out.println(message1.getSender().getUsername());
-            System.out.println(senderUsername);
-            System.out.println(message1.getReceiver().getUsername());
-            System.out.println(receiverUsername);
-            System.out.println(message1.getMessage());
-            System.out.println(message);
-            System.out.println(message1.getDateTime());
-            System.out.println(dateTime);
-
-
-
-            if(message1.getSender().getUsername().equals(senderUsername) && message1.getReceiver().getUsername().equals(receiverUsername) && message1.getMessage().equals(message) &&
+            if(message1.getBackupSender().equals(senderUsername) && message1.getBackupReceiver().equals(receiverUsername) && message1.getMessage().equals(message) &&
                     message1.getDateTime().getYear()==dateTime.getYear() && message1.getDateTime().getMonthValue() == dateTime.getMonthValue() &&
                     message1.getDateTime().getDayOfMonth() == dateTime.getDayOfMonth() && message1.getDateTime().getHour() == dateTime.getHour() &&
                     message1.getDateTime().getMinute() == dateTime.getMinute()){
@@ -106,6 +97,10 @@ public class MessageService {
         if(toDelete.isPresent()){
             Message message = toDelete.get();
             inbox.remove(message);
+            message.setReceiver(null);
+            if(message.getReceiver() == null && message.getSender() == null){
+                messageRepository.deleteById(messageId);
+            }
             userRepository.findById(userId).get().setInbox(inbox);
             userRepository.save(userRepository.findById(userId).get());
             return new ResponseEntity<>(userRepository.findById(userId).get().getInbox(), HttpStatus.OK);
@@ -118,12 +113,15 @@ public class MessageService {
         Optional<Message> toDelete = messageRepository.findById(messageId);
         if(toDelete.isPresent()){
             Message message = toDelete.get();
-            System.out.println(outbox.size());
             outbox.remove(message);
-            userRepository.findById(userId).get().setOutbox(outbox);
-            System.out.println(userRepository.findById(userId).get().getOutbox().size());
+            message.setSender(null);
+            if(message.getReceiver() == null && message.getSender() == null){
+                messageRepository.deleteById(messageId);
+            }
+            User user = userRepository.findById(userId).get();
+            user.setOutbox(outbox);
             userRepository.save(userRepository.findById(userId).get());
-            return new ResponseEntity<>(userRepository.findById(userId).get().getOutbox(), HttpStatus.OK);
+            return new ResponseEntity<>(outbox, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
