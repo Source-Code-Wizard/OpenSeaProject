@@ -27,76 +27,7 @@ import java.util.List;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
- /*   private UserDetailsServiceImp userDetailsService;
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
-
-
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
-    }
-
-    public WebSecurityConfiguration(UserDetailsServiceImp userDetailsService, BCryptPasswordEncoder passwordEncoder) {
-        this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-       *//* http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers("/api/users/*").permitAll().
-                 antMatchers("/api/admin/*").hasRole("ADMIN").
-                 and().
-                 authorizeRequests().anyRequest().authenticated()
-                .and()
-                //.addFilter(new JWTAuthenticationFilter(authenticationManager()))
-                //.addFilter(new JWTAuthorizationFilter(authenticationManager()))
-                // this disables session creation on Spring Security
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);*//*
-        http.cors().and().csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests()
-                .antMatchers("/api/users/*").permitAll()
-                .antMatchers("/api/admin/*").permitAll()
-                .anyRequest().authenticated();
-       // http.addFilterBefore(new JWTAuthenticationFilter(authenticationManager()) , UsernamePasswordAuthenticationFilter.class );
-
-       // http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-    }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.applyPermitDefaultValues();
-        config.addExposedHeader("Authorization");
-        config.setAllowCredentials(true);
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-*/
-   /* @Override
-    @Bean
-    protected InMemoryUserDetailsManager userDetailsService() {
-        UserDetails admin = User.builder().username("admin").password(passwordEncoder
-                .encode("admin1234")).roles("ADMIN").build();
-        return new InMemoryUserDetailsManager(admin);
-    }*/
 
     @Autowired
     UserDetailsServiceImp userDetailsService;
@@ -128,14 +59,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-       /* CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
-        corsConfiguration.setAllowedOrigins(List.of("https://localhost:3000"));
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PUT","OPTIONS","PATCH", "DELETE"));
-        corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setExposedHeaders(List.of("Authorization"));*/
-
-        http.cors().and().csrf().disable()
+       http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/**").permitAll()
